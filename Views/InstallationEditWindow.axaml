@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="CityHelper.Views.InstallationEditWindow"
+        Width="560" SizeToContent="Height" CanResize="False"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+  <StackPanel Margin="16" Spacing="10">
+    <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto" RowSpacing="10">
+      <TextBlock Grid.Row="0" Text="Display Name:" VerticalAlignment="Center"/>
+      <TextBox Grid.Row="0" Grid.Column="1" Name="NameBox"/>
+      <TextBlock Grid.Row="1" Text="Folder:" VerticalAlignment="Center"/>
+      <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="6">
+        <TextBox Name="PathBox"/>
+        <Button Grid.Column="1" Content="Browse..." Click="OnBrowse"/>
+      </Grid>
+    </Grid>
+    <TextBlock Name="ErrorText" Foreground="#F48771" IsVisible="False" TextWrapping="Wrap"/>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button Content="OK" Click="OnOk" IsDefault="True" MinWidth="90" HorizontalContentAlignment="Center"/>
+      <Button Content="Cancel" Click="OnCancel" IsCancel="True" MinWidth="90" HorizontalContentAlignment="Center"/>
+    </StackPanel>
+  </StackPanel>
+</Window>

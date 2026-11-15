@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.LogViewer.ViewModels"
+             x:Class="CityHelper.Tools.LogViewer.Views.LogViewerOptionsView"
+             x:DataType="vm:LogViewerOptionsViewModel">
+
+  <StackPanel Spacing="14">
+
+    <StackPanel Spacing="6">
+      <TextBlock Text="Color codes" FontWeight="SemiBold" />
+      <ComboBox MinWidth="300" SelectedIndex="{Binding ColorModeIndex}">
+        <ComboBoxItem Content="Hide the color codes" />
+        <ComboBoxItem Content="Show the raw tags inline" />
+      </ComboBox>
+      <TextBlock Text="Tags such as &lt;color #ff0101&gt; and &lt;bgcolor #015959&gt; are embedded in many chat lines. They are not drawn as colors for now."
+                 Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+    </StackPanel>
+
+    <StackPanel Spacing="6">
+      <TextBlock Text="Channel colors" FontWeight="SemiBold" />
+      <ComboBox MinWidth="300" SelectedIndex="{Binding ChannelColorIndex}">
+        <ComboBoxItem Content="Off" />
+        <ComboBoxItem Content="Use default colors" />
+      </ComboBox>
+    </StackPanel>
+
+    <CheckBox Content="Word wrap in the main pane" IsChecked="{Binding WordWrap}" />
+  </StackPanel>
+</UserControl>

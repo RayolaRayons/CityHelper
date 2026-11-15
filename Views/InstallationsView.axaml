@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.ViewModels"
+             x:Class="CityHelper.Views.InstallationsView"
+             x:DataType="vm:InstallationsViewModel">
+
+  <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+
+    <!-- Two-column grid: Display Name | City of Heroes folder -->
+    <Border BorderBrush="#555" BorderThickness="1">
+      <Grid RowDefinitions="Auto,Auto">
+        <Grid Grid.Row="0" ColumnDefinitions="220,*" Background="#333">
+          <Border Grid.Column="0" Padding="8,4" BorderBrush="#555" BorderThickness="0,0,1,0">
+            <TextBlock Text="Display Name" FontWeight="SemiBold"/>
+          </Border>
+          <Border Grid.Column="1" Padding="8,4">
+            <TextBlock Text="City of Heroes Folder" FontWeight="SemiBold"/>
+          </Border>
+        </Grid>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}"
+                 DoubleTapped="OnRowDoubleTapped" BorderThickness="0" Padding="0" MinHeight="90" MaxHeight="220">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:InstallationRow">
+              <Grid ColumnDefinitions="220,*">
+                <TextBlock Grid.Column="0" Padding="2,0" Text="{Binding DisplayName}"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Column="1" Padding="8,0" Text="{Binding Path}"
+                           TextTrimming="CharacterEllipsis"/>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
+    </Border>
+
+    <StackPanel Grid.Column="1" Spacing="8" Width="130">
+      <Button Content="Add..." Command="{Binding AddCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+      <Button Content="Edit..." Command="{Binding EditCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+      <Button Content="Remove" Command="{Binding RemoveCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+      <Button Content="Make Default" Command="{Binding MakeDefaultCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,16,0,0"/>
+    </StackPanel>
+  </Grid>
+</UserControl>

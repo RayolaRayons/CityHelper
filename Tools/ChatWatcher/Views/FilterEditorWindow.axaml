@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CityHelper.Tools.ChatWatcher.ViewModels"
+        x:Class="CityHelper.Tools.ChatWatcher.Views.FilterEditorWindow"
+        x:DataType="vm:FilterEditorViewModel"
+        Title="Edit Filter"
+        Width="560" SizeToContent="Height" CanResize="False"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+
+  <StackPanel Margin="16" Spacing="10">
+    <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto" RowSpacing="10">
+      <TextBlock Grid.Row="0" Text="Display Name:" VerticalAlignment="Center" />
+      <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
+      <TextBlock Grid.Row="1" Text="Keywords:" VerticalAlignment="Top" Margin="0,6,0,0" />
+      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Keywords}" AcceptsReturn="True" TextWrapping="Wrap"
+               Height="88" VerticalAlignment="Top" PlaceholderText="Separated by commas" />
+    </Grid>
+
+    <TextBlock Text="Watch these channels" FontWeight="SemiBold" Margin="0,4,0,0" />
+    <StackPanel Orientation="Horizontal" Spacing="22">
+      <CheckBox Content="Tell" IsChecked="{Binding Tell}" />
+      <CheckBox Content="Local" IsChecked="{Binding Local}" />
+      <CheckBox Content="Broadcast" IsChecked="{Binding Broadcast}" />
+      <CheckBox Content="Request" IsChecked="{Binding Request}" />
+    </StackPanel>
+
+    <TextBlock Text="{Binding ErrorText}" Foreground="#F48771" TextWrapping="Wrap" IsVisible="{Binding ErrorText.Length}" />
+
+    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,6,0,0">
+      <Button Content="Reset to Defaults" Command="{Binding ResetToDefaultsCommand}" />
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+        <Button Content="Save" Command="{Binding SaveCommand}" IsDefault="True" MinWidth="90" HorizontalContentAlignment="Center" />
+        <Button Content="Cancel" Command="{Binding CancelCommand}" IsCancel="True" MinWidth="90" HorizontalContentAlignment="Center" />
+      </StackPanel>
+    </Grid>
+  </StackPanel>
+</Window>

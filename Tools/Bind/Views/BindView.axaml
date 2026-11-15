@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.Bind.ViewModels"
+             x:Class="CityHelper.Tools.Bind.Views.BindView"
+             x:DataType="vm:BindViewModel">
+
+  <DockPanel Margin="16">
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Text="Section:" VerticalAlignment="Center" />
+        <ComboBox MinWidth="340" ItemsSource="{Binding Sections}" SelectedItem="{Binding SelectedSection}" />
+
+        <TextBlock Text="File:" VerticalAlignment="Center" Margin="10,0,0,0" IsVisible="{Binding IsFolderSection}" />
+        <ComboBox MinWidth="220" ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}"
+                  IsVisible="{Binding IsFolderSection}" />
+        <Button Content="New Binds File..." Command="{Binding NewFileCommand}" IsVisible="{Binding IsFolderSection}" />
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Button Content="Add Bind" Command="{Binding AddRowCommand}" />
+        <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Opacity="0.7" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+
+      <Grid ColumnDefinitions="220,*,40" Background="#333" Margin="0,4,0,0">
+        <TextBlock Grid.Column="0" Text="Key" Margin="8,4" FontWeight="SemiBold" />
+        <TextBlock Grid.Column="1" Text="Command" Margin="8,4" FontWeight="SemiBold" />
+      </Grid>
+    </StackPanel>
+
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Rows}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:BindRowViewModel">
+            <Grid ColumnDefinitions="220,*,40" ColumnSpacing="6" Margin="0,2">
+              <TextBox Grid.Column="0" Text="{Binding Key}" PlaceholderText="e.g. lctrl+a" />
+              <TextBox Grid.Column="1" Text="{Binding Command}" PlaceholderText="command" />
+              <Button Grid.Column="2" Content="✕" Command="{Binding RemoveCommand}" HorizontalContentAlignment="Center"
+                      ToolTip.Tip="Remove this bind" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

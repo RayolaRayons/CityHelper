@@ -1,0 +1,137 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:CityHelper.ViewModels"
+             xmlns:rb="clr-namespace:CityHelper.Ribbon"
+             xmlns:tools="clr-namespace:CityHelper.Tools"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+             x:Class="CityHelper.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <Design.DataContext>
+    <vm:MainViewModel />
+  </Design.DataContext>
+
+  <!-- Shortcuts for the selected tool's Save and Refresh (disabled when the tool has none) -->
+  <UserControl.KeyBindings>
+    <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
+    <KeyBinding Gesture="F5" Command="{Binding RefreshCommand}" />
+  </UserControl.KeyBindings>
+
+  <UserControl.Styles>
+    <Style Selector="Button.segment">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Padding" Value="10,0"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="CornerRadius" Value="0"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.segment:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1C97EA"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+  </UserControl.Styles>
+  <Grid RowDefinitions="Auto,*,Auto">
+
+    <!-- Ribbon: full width, fixed height -->
+    <Border Grid.Row="0" Height="120" Background="#2D2D30"
+            BorderBrush="#3F3F46" BorderThickness="0,0,0,1">
+      <TabControl ItemsSource="{Binding RibbonTabs}" SelectedItem="{Binding SelectedRibbonTab}">
+        <TabControl.ItemTemplate>
+          <DataTemplate x:DataType="rb:RibbonTab"><TextBlock Text="{Binding Header}"/></DataTemplate>
+        </TabControl.ItemTemplate>
+        <TabControl.ContentTemplate>
+          <DataTemplate x:DataType="rb:RibbonTab">
+            <!-- Scrolls sideways when a tool has more buttons than the window is wide -->
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding Groups}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="rb:RibbonGroup">
+                  <Border BorderBrush="#3F3F46" BorderThickness="0,0,1,0" Padding="8,0">
+                    <DockPanel>
+                      <TextBlock DockPanel.Dock="Bottom" Text="{Binding Header}"
+                                 HorizontalAlignment="Center" FontSize="11" Opacity="0.6"/>
+                      <ItemsControl ItemsSource="{Binding Commands}">
+                        <ItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="rb:RibbonCommand">
+                            <Button Content="{Binding Label}" Command="{Binding Command}"
+                                    ToolTip.Tip="{Binding Tooltip}"
+                                    MinWidth="72" Height="48" VerticalAlignment="Center"/>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </DockPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            </ScrollViewer>
+          </DataTemplate>
+        </TabControl.ContentTemplate>
+      </TabControl>
+    </Border>
+
+    <Grid Grid.Row="1" ColumnDefinitions="260,Auto,*">
+
+      <!-- Left column -->
+      <Grid Grid.Column="0" MinWidth="160">
+        <ListBox ItemsSource="{Binding Tools}"
+                 SelectedItem="{Binding SelectedTool}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="tools:ITool"><TextBlock Text="{Binding Name}"/></DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
+
+      <GridSplitter Grid.Column="1" Width="5" Background="#3F3F46" ResizeDirection="Columns"/>
+
+      <!-- Content pane: view chosen by ViewLocator from the tool's view model -->
+      <ContentControl Grid.Column="2" Content="{Binding CurrentContent}"/>
+    </Grid>
+
+    <!-- Status bar: full width. Left = selection segments, right = reserved for tool status messages -->
+    <Border Grid.Row="2" Background="#007ACC" Height="26">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <StackPanel Grid.Column="0" Orientation="Horizontal">
+          <TextBlock Text="Installation:" Foreground="White" Opacity="0.75" FontSize="12"
+                     VerticalAlignment="Center" Margin="10,0,0,0"/>
+          <Button x:Name="InstallationSegment" Classes="segment"
+                  Content="{Binding State.SelectedInstallation.Name}"
+                  ToolTip.Tip="{Binding State.SelectedInstallation.Path}">
+            <Button.Flyout>
+              <Flyout Placement="TopEdgeAlignedLeft">
+                <ListBox MinWidth="200" ItemsSource="{Binding State.Installations}"
+                         SelectedItem="{Binding State.SelectedInstallation}"
+                         Tapped="OnInstallationPicked"/>
+              </Flyout>
+            </Button.Flyout>
+          </Button>
+          <Border Width="1" Margin="0,5" Background="#80FFFFFF"/>
+          <TextBlock Text="Account:" Foreground="White" Opacity="0.75" FontSize="12"
+                     VerticalAlignment="Center" Margin="10,0,0,0"/>
+          <Button x:Name="AccountSegment" Classes="segment"
+                  Content="{Binding State.SelectedAccount.Name, TargetNullValue='(no accounts)'}">
+            <Button.Flyout>
+              <Flyout Placement="TopEdgeAlignedLeft">
+                <ListBox MinWidth="160" ItemsSource="{Binding State.Accounts}"
+                         SelectedItem="{Binding State.SelectedAccount}"
+                         Tapped="OnAccountPicked"/>
+              </Flyout>
+            </Button.Flyout>
+          </Button>
+        </StackPanel>
+        <!-- Grid.Column="2": future tool status messages -->
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>
+
+

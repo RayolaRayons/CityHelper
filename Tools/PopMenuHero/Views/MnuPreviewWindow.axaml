@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CityHelper.Tools.PopMenuHero.ViewModels"
+        x:Class="CityHelper.Tools.PopMenuHero.Views.MnuPreviewWindow"
+        x:DataType="vm:MnuPreviewViewModel"
+        Title="MNU Preview" Width="760" Height="640" MinWidth="360" MinHeight="240"
+        Background="#1e1e1e" WindowStartupLocation="Manual">
+
+  <Window.Styles>
+    <Style Selector="ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Focusable" Value="False" />
+    </Style>
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Border.line.hl">
+      <Setter Property="Background" Value="#264F78" />
+    </Style>
+  </Window.Styles>
+
+  <ListBox x:Name="LineList" ItemsSource="{Binding Lines}" Background="#1e1e1e" BorderThickness="0"
+           SelectionMode="Single" Padding="0"
+           FontFamily="Cascadia Mono, Consolas, Courier New, monospace" FontSize="12.5"
+           ScrollViewer.HorizontalScrollBarVisibility="Auto">
+    <ListBox.ItemTemplate>
+      <DataTemplate x:DataType="vm:PreviewLine">
+        <Border Classes="line" Classes.hl="{Binding IsHighlighted}" Padding="0,1">
+          <Grid ColumnDefinitions="56,*">
+            <TextBlock Text="{Binding Number}" Foreground="#858585" HorizontalAlignment="Right" Margin="0,0,12,0" />
+            <TextBlock Grid.Column="1" Text="{Binding Text}" Foreground="#d4d4d4" TextWrapping="NoWrap" />
+          </Grid>
+        </Border>
+      </DataTemplate>
+    </ListBox.ItemTemplate>
+  </ListBox>
+</Window>

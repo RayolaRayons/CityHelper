@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.ChatWatcher.ViewModels"
+             x:Class="CityHelper.Tools.ChatWatcher.Views.ChatWatcherOptionsView"
+             x:DataType="vm:ChatWatcherOptionsViewModel">
+
+  <StackPanel Spacing="8">
+
+    <TextBlock Text="Filters" FontWeight="SemiBold" />
+
+    <!-- Grid: display name | keywords | the four channels | Edit -->
+    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+      <Border BorderBrush="#555" BorderThickness="1">
+        <Grid RowDefinitions="Auto,Auto">
+          <Grid ColumnDefinitions="150,*,48,52,78,68,70" Background="#333">
+            <TextBlock Grid.Column="0" Text="Display Name" Margin="8,4" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="1" Text="Keywords" Margin="8,4" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="2" Text="Tell" Margin="4,4" FontWeight="SemiBold" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="3" Text="Local" Margin="4,4" FontWeight="SemiBold" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="4" Text="Broadcast" Margin="4,4" FontWeight="SemiBold" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="5" Text="Request" Margin="4,4" FontWeight="SemiBold" HorizontalAlignment="Center" />
+          </Grid>
+          <ListBox Grid.Row="1" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}"
+                   BorderThickness="0" Padding="0" MinHeight="120" MaxHeight="240">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:FilterRowViewModel">
+                <Grid ColumnDefinitions="150,*,48,52,78,68,70">
+                  <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" Padding="4,0" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Grid.Column="1" Text="{Binding Keywords}" VerticalAlignment="Center" Padding="8,0" Opacity="0.85"
+                             TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Keywords}" />
+                  <TextBlock Grid.Column="2" Text="{Binding TellText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="3" Text="{Binding LocalText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="4" Text="{Binding BroadcastText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="5" Text="{Binding RequestText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  <Button Grid.Column="6" Content="Edit..." Command="{Binding EditCommand}" Margin="4,2" Padding="8,2"
+                          HorizontalContentAlignment="Center" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Grid>
+      </Border>
+
+      <StackPanel Grid.Column="1" Spacing="8" Width="100">
+        <Button Content="Add..." Command="{Binding AddCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+        <Button Content="Remove" Command="{Binding RemoveCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+      </StackPanel>
+    </Grid>
+
+    <!-- Sending to City of Heroes -->
+    <TextBlock Text="Sending to City of Heroes (milliseconds)" FontWeight="SemiBold" Margin="0,10,0,0" />
+    <Grid ColumnDefinitions="260,150" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" HorizontalAlignment="Left">
+      <TextBlock Grid.Row="0" Text="Delay to switch to CoH:" VerticalAlignment="Center"
+                 ToolTip.Tip="Pause after the game window is brought to the front, before anything is typed" />
+      <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding SwitchDelayMs}" Minimum="0" Maximum="10000" Increment="50" FormatString="0" />
+      <TextBlock Grid.Row="1" Text="Delay to paste:" VerticalAlignment="Center"
+                 ToolTip.Tip="Pause between Enter (opens the chat bar) and pasting the command" />
+      <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding PasteDelayMs}" Minimum="0" Maximum="10000" Increment="50" FormatString="0" />
+      <TextBlock Grid.Row="2" Text="Delay to send:" VerticalAlignment="Center"
+                 ToolTip.Tip="Pause after pasting, before the final Enter sends the command" />
+      <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding SendDelayMs}" Minimum="0" Maximum="10000" Increment="50" FormatString="0" />
+    </Grid>
+    <CheckBox Content="Play a sound for new requests" IsChecked="{Binding PlaySound}" Margin="0,4,0,0" />
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.ConfigSync.ViewModels"
+             x:Class="CityHelper.Tools.ConfigSync.Views.ConfigSyncView"
+             x:DataType="vm:ConfigSyncViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="Border.cell">
+      <Setter Property="Background" Value="#2B2B2F" />
+      <Setter Property="BorderBrush" Value="#3F3F46" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="Margin" Value="0,3" />
+    </Style>
+    <!-- The newer side of a pair -->
+    <Style Selector="Border.cell.newer">
+      <Setter Property="Background" Value="#1F4D2B" />
+      <Setter Property="BorderBrush" Value="#3FB950" />
+    </Style>
+    <Style Selector="TextBlock.header">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Opacity" Value="0.8" />
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel Margin="16">
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <StackPanel Orientation="Horizontal" Spacing="12">
+        <Button Content="Sync All" Command="{Binding SyncAllCommand}" Padding="18,6" />
+        <Button Content="Refresh" Command="{Binding RefreshCommand}" Padding="14,6" />
+        <TextBlock Text="{Binding EnvironmentText}" VerticalAlignment="Center" Opacity="0.8" />
+      </StackPanel>
+      <TextBlock Text="{Binding StatusText}" Foreground="#E5C07B" TextWrapping="Wrap" />
+    </StackPanel>
+
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="150,*,64,*" Margin="0,14,0,2">
+      <TextBlock Grid.Column="0" Classes="header" Text="Item" />
+      <TextBlock Grid.Column="1" Classes="header" Text="Local files" Margin="10,0,0,0" />
+      <TextBlock Grid.Column="3" Classes="header" Text="Sync folder" Margin="10,0,0,0" />
+    </Grid>
+
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Rows}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:SyncRowViewModel">
+            <Grid ColumnDefinitions="150,*,64,*">
+              <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" />
+
+              <Border Grid.Column="1" Classes="cell" Classes.newer="{Binding LocalIsNewer}">
+                <StackPanel>
+                  <TextBlock Text="{Binding LocalPath}" TextTrimming="CharacterEllipsis"
+                             ToolTip.Tip="{Binding LocalPath}" />
+                  <TextBlock Text="{Binding LocalText}" Opacity="0.7" FontSize="11" />
+                </StackPanel>
+              </Border>
+
+              <Button Grid.Column="2" Content="{Binding ArrowText}" Command="{Binding SyncCommand}"
+                      Width="46" HorizontalAlignment="Center" VerticalAlignment="Center"
+                      HorizontalContentAlignment="Center" FontSize="16" />
+
+              <Border Grid.Column="3" Classes="cell" Classes.newer="{Binding SyncIsNewer}">
+                <StackPanel>
+                  <TextBlock Text="{Binding SyncPath}" TextTrimming="CharacterEllipsis"
+                             ToolTip.Tip="{Binding SyncPath}" />
+                  <TextBlock Text="{Binding SyncText}" Opacity="0.7" FontSize="11" />
+                </StackPanel>
+              </Border>
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

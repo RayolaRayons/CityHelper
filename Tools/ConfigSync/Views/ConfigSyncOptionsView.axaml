@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.ConfigSync.ViewModels"
+             x:Class="CityHelper.Tools.ConfigSync.Views.ConfigSyncOptionsView"
+             x:DataType="vm:ConfigSyncOptionsViewModel">
+
+  <StackPanel Spacing="14">
+
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <TextBlock Text="Environment:" VerticalAlignment="Center" />
+      <ComboBox MinWidth="280" ItemsSource="{Binding Environments}" SelectedItem="{Binding SelectedEnvironment}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:EnvironmentEditor">
+            <TextBlock Text="{Binding Name}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </StackPanel>
+
+    <ContentControl Content="{Binding SelectedEnvironment}">
+      <ContentControl.ContentTemplate>
+        <DataTemplate x:DataType="vm:EnvironmentEditor">
+          <StackPanel Spacing="10">
+
+            <CheckBox Content="Make this environment the default" IsChecked="{Binding IsDefault}"
+                      IsEnabled="{Binding CanChangeDefault}" />
+            <CheckBox Content="Use default (inherit the default environment's settings)" IsChecked="{Binding UseDefault}"
+                      IsEnabled="{Binding CanChangeDefault}" />
+
+            <StackPanel Orientation="Horizontal" Spacing="10" ToolTip.Tip="The folder under settings used by this installation (chat, client and key bind files)">
+              <TextBlock Text="Game environment:" VerticalAlignment="Center" />
+              <ComboBox MinWidth="180" ItemsSource="{Binding GameEnvironments}" SelectedItem="{Binding GameEnvironment}" />
+            </StackPanel>
+
+            <!-- Everything below is greyed out while inheriting the default's settings -->
+            <StackPanel Spacing="10" IsEnabled="{Binding IsEditable}">
+              <Border BorderBrush="#3F3F46" BorderThickness="0,1,0,0" Margin="0,4,0,0" />
+
+              <TextBlock Text="Backup folder" FontWeight="SemiBold" />
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                <TextBox Text="{Binding BackupFolder}" />
+                <Button Grid.Column="1" Content="Browse..." Click="OnBrowse" />
+              </Grid>
+
+              <TextBlock Text="Options" FontWeight="SemiBold" Margin="0,6,0,0" />
+              <CheckBox Content="Merge Logfiles" IsChecked="{Binding MergeLogfiles}" />
+              <CheckBox Content="Merge Private Logs" IsChecked="{Binding MergePrivateLogs}" />
+
+              <TextBlock Text="Items to sync" FontWeight="SemiBold" Margin="0,6,0,0" />
+              <ItemsControl ItemsSource="{Binding ItemToggles}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ItemToggle">
+                    <CheckBox Content="{Binding DisplayName}" IsChecked="{Binding IsChecked}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </StackPanel>
+        </DataTemplate>
+      </ContentControl.ContentTemplate>
+    </ContentControl>
+  </StackPanel>
+</UserControl>

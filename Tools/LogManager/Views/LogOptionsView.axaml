@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.LogManager.ViewModels"
+             x:Class="CityHelper.Tools.LogManager.Views.LogOptionsView"
+             x:DataType="vm:LogOptionsViewModel">
+
+  <StackPanel Spacing="10">
+
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <TextBlock Text="Preset:" VerticalAlignment="Center" />
+      <ComboBox MinWidth="160" ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset}" />
+    </StackPanel>
+    <TextBlock Text="RP selects Broadcast, Coalition, Looking for group, Request, Supergroup, Team, Tell, League, Local and Emotes."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+
+    <CheckBox Content="Backup Merged Files (move merged sources into an Archive subfolder)"
+              IsChecked="{Binding BackupMergedFiles}" />
+
+    <TextBlock Text="Items to include" FontWeight="SemiBold" Margin="0,6,0,0" />
+    <TextBlock Text="Cleanup Logfile removes entries from the channels that are unchecked."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+    <ItemsControl ItemsSource="{Binding Channels}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:ChannelToggle">
+          <CheckBox Content="{Binding DisplayName}" IsChecked="{Binding IsChecked}" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</UserControl>

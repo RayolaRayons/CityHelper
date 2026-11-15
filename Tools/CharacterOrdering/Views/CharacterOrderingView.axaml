@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.CharacterOrdering.ViewModels"
+             x:Class="CityHelper.Tools.CharacterOrdering.Views.CharacterOrderingView"
+             x:DataType="vm:CharacterOrderingViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="Border.slot">
+      <Setter Property="Padding" Value="2" />
+      <Setter Property="CornerRadius" Value="4" />
+    </Style>
+    <Style Selector="Border.slot.target">
+      <Setter Property="Background" Value="#264F78" />
+    </Style>
+
+    <Style Selector="Border.charbtn">
+      <Setter Property="Background" Value="#3A3A3F" />
+      <Setter Property="BorderBrush" Value="#5A5A60" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Border.charbtn:pointerover">
+      <Setter Property="Background" Value="#4A4A52" />
+    </Style>
+    <Style Selector="Border.charbtn.dragging">
+      <Setter Property="Background" Value="#0E639C" />
+      <Setter Property="Opacity" Value="0.9" />
+      <Setter Property="IsHitTestVisible" Value="False" />
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel Margin="16">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
+      <TextBlock Text="Server:" VerticalAlignment="Center" />
+      <ComboBox MinWidth="240" ItemsSource="{Binding Servers}" SelectedItem="{Binding SelectedServer}" />
+      <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Opacity="0.7" />
+    </StackPanel>
+
+    <ScrollViewer x:Name="Scroller" Margin="0,12,0,0">
+      <ItemsControl x:Name="SlotList" ItemsSource="{Binding Slots}" HorizontalAlignment="Left" Width="380" Margin="0,0,0,16">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:SlotViewModel">
+            <StackPanel>
+              <TextBlock Text="{Binding SectionTitle}" IsVisible="{Binding IsSectionStart}"
+                         FontWeight="SemiBold" Opacity="0.7" Margin="0,12,0,4" />
+              <Border Classes="slot" Classes.target="{Binding IsDropTarget}">
+                <Grid ColumnDefinitions="40,*">
+                  <TextBlock Text="{Binding Position}" VerticalAlignment="Center" HorizontalAlignment="Right"
+                             Margin="0,0,10,0" Opacity="0.6" />
+                  <Border Grid.Column="1" Classes="charbtn" Classes.dragging="{Binding IsDragging}"
+                          IsVisible="{Binding HasCharacter}">
+                    <TextBlock Text="{Binding CharacterName}" />
+                  </Border>
+                  <Border Grid.Column="1" Height="34" CornerRadius="4" BorderBrush="#4A4A4F" BorderThickness="1"
+                          IsVisible="{Binding IsEmpty}" />
+                </Grid>
+              </Border>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

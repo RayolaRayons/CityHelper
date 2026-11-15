@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.PiggViewer.ViewModels"
+             x:Class="CityHelper.Tools.PiggViewer.Views.PiggViewerView"
+             x:DataType="vm:PiggViewerViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="TreeViewItem" x:DataType="vm:DirectoryNodeViewModel">
+      <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+    </Style>
+    <Style Selector="TextBlock.header">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Opacity" Value="0.8" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,*,Auto" Margin="12">
+
+    <TextBlock Grid.Row="0" Text="{Binding MountText}" Opacity="0.75" Margin="0,0,0,8" TextTrimming="CharacterEllipsis" />
+
+    <Grid Grid.Row="1" ColumnDefinitions="260,Auto,*">
+
+      <!-- Folder tree -->
+      <Border Grid.Column="0" BorderBrush="#3F3F46" BorderThickness="1">
+        <TreeView ItemsSource="{Binding Roots}" SelectedItem="{Binding SelectedDirectory}">
+          <TreeView.ItemTemplate>
+            <TreeDataTemplate x:DataType="vm:DirectoryNodeViewModel" ItemsSource="{Binding Children}">
+              <TextBlock Text="{Binding Name}" />
+            </TreeDataTemplate>
+          </TreeView.ItemTemplate>
+          <TreeView.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Export Folder..." Command="{Binding ExportDirectoryCommand}" />
+            </ContextMenu>
+          </TreeView.ContextMenu>
+        </TreeView>
+      </Border>
+
+      <GridSplitter Grid.Column="1" Width="6" Background="Transparent" ResizeDirection="Columns" />
+
+      <Grid Grid.Column="2" RowDefinitions="*,Auto,1.3*">
+
+        <!-- Files of the selected folder -->
+        <DockPanel Grid.Row="0">
+          <Grid DockPanel.Dock="Top" ColumnDefinitions="*,140,120,90,90" Margin="8,0,16,2">
+            <TextBlock Grid.Column="0" Classes="header" Text="Name" />
+            <TextBlock Grid.Column="1" Classes="header" Text="Date modified" />
+            <TextBlock Grid.Column="2" Classes="header" Text="Type" />
+            <TextBlock Grid.Column="3" Classes="header" Text="Size" HorizontalAlignment="Right" />
+            <TextBlock Grid.Column="4" Classes="header" Text="Packed" HorizontalAlignment="Right" />
+          </Grid>
+          <Border BorderBrush="#3F3F46" BorderThickness="1">
+            <ListBox x:Name="FileList" ItemsSource="{Binding Files}" SelectionMode="Multiple">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:FileRowViewModel">
+                  <Grid ColumnDefinitions="*,140,120,90,90">
+                    <TextBlock Grid.Column="0" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Grid.Column="1" Text="{Binding ModifiedText}" Opacity="0.8" />
+                    <TextBlock Grid.Column="2" Text="{Binding TypeText}" Opacity="0.8" />
+                    <TextBlock Grid.Column="3" Text="{Binding SizeText}" HorizontalAlignment="Right" Opacity="0.8" />
+                    <TextBlock Grid.Column="4" Text="{Binding PackedText}" HorizontalAlignment="Right" Opacity="0.8" />
+                  </Grid>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+              <ListBox.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="Export Files..." Command="{Binding ExportFilesCommand}" />
+                </ContextMenu>
+              </ListBox.ContextMenu>
+            </ListBox>
+          </Border>
+        </DockPanel>
+
+        <GridSplitter Grid.Row="1" Height="6" Background="Transparent" ResizeDirection="Rows" />
+
+        <!-- Preview of the selected file: texture, text or hex -->
+        <Border Grid.Row="2" BorderBrush="#3F3F46" BorderThickness="1">
+          <ContentControl Content="{Binding Preview}" />
+        </Border>
+      </Grid>
+    </Grid>
+
+    <TextBlock Grid.Row="2" Text="{Binding StatusText}" Margin="0,8,0,0" Opacity="0.75" TextTrimming="CharacterEllipsis" />
+  </Grid>
+</UserControl>

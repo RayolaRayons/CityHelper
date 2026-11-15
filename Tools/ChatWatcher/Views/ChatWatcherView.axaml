@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.ChatWatcher.ViewModels"
+             x:Class="CityHelper.Tools.ChatWatcher.Views.ChatWatcherView"
+             x:DataType="vm:ChatWatcherViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="#2B2B2F" />
+      <Setter Property="BorderBrush" Value="#3F3F46" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="10" />
+      <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel Margin="16">
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+        <TextBox Text="{Binding Keywords}" PlaceholderText="Keywords, separated by commas (blank = everything in the watched channels)" />
+        <ComboBox Grid.Column="1" MinWidth="200" ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter}"
+                  PlaceholderText="Quick select filter..." />
+      </Grid>
+
+      <StackPanel Orientation="Horizontal" Spacing="22">
+        <CheckBox Content="Tell" IsChecked="{Binding WatchTell}" />
+        <CheckBox Content="Local" IsChecked="{Binding WatchLocal}" />
+        <CheckBox Content="Broadcast" IsChecked="{Binding WatchBroadcast}" />
+        <CheckBox Content="Request" IsChecked="{Binding WatchRequest}" />
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" Spacing="16">
+        <CheckBox Content="Send requests directly to City of Heroes" IsChecked="{Binding SendDirectly}"
+                  IsEnabled="{Binding CanSendDirectly}" />
+        <Button Content="{Binding MonitorButtonText}" Command="{Binding ToggleMonitoringCommand}" Padding="14,4" MinWidth="130"
+                HorizontalContentAlignment="Center" />
+        <Button Content="Clear" Command="{Binding ClearCommand}" Padding="14,4" />
+      </StackPanel>
+
+      <TextBlock Text="{Binding StatusText}" Opacity="0.65" FontSize="11" TextTrimming="CharacterEllipsis" />
+      <TextBlock Text="{Binding ResultText}" Foreground="#E5C07B" TextWrapping="Wrap" />
+    </StackPanel>
+
+    <Panel Margin="0,10,0,0">
+      <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Cards}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:RequestCardViewModel">
+              <Border Classes="card">
+                <StackPanel Spacing="6">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="15" />
+                    <TextBlock Grid.Column="1" Text="{Binding TimeText}" Opacity="0.6" />
+                  </Grid>
+                  <Grid ColumnDefinitions="Auto,*">
+                    <TextBlock Text="{Binding ChannelText}" FontWeight="SemiBold" Margin="0,0,8,0" />
+                    <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap" />
+                  </Grid>
+                  <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                    <Button Content="Team" Command="{Binding TeamCommand}" MinWidth="86" HorizontalContentAlignment="Center" />
+                    <Button Content="League" Command="{Binding LeagueCommand}" MinWidth="86" HorizontalContentAlignment="Center" />
+                    <Button Content="Dismiss" Command="{Binding DismissCommand}" MinWidth="86" HorizontalContentAlignment="Center" />
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+      <TextBlock Text="No pending requests." IsVisible="{Binding IsEmpty}" FontSize="16" Opacity="0.45"
+                 HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" />
+    </Panel>
+  </DockPanel>
+</UserControl>

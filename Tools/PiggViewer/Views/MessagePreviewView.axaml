@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.PiggViewer.ViewModels"
+             x:Class="CityHelper.Tools.PiggViewer.Views.MessagePreviewView"
+             x:DataType="vm:MessagePreviewViewModel">
+  <TextBlock Text="{Binding Message}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"
+             Margin="16" Opacity="0.8">
+    <TextBlock.ContextMenu>
+      <ContextMenu>
+        <MenuItem Header="Export..." Command="{Binding ExportCommand}" />
+      </ContextMenu>
+    </TextBlock.ContextMenu>
+  </TextBlock>
+</UserControl>

@@ -1,0 +1,106 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.LogViewer.ViewModels"
+             xmlns:v="using:CityHelper.Tools.LogViewer.Views"
+             xmlns:m="using:CityHelper.Tools.LogViewer"
+             x:Class="CityHelper.Tools.LogViewer.Views.LogViewerView"
+             x:DataType="vm:LogViewerViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Focusable" Value="False" />
+    </Style>
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#26FFFFFF" />
+    </Style>
+    <Style Selector="Button.mini">
+      <Setter Property="Padding" Value="8,2" />
+      <Setter Property="FontSize" Value="11" />
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel Margin="12">
+    <!-- Log file + display toggles -->
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+        <TextBlock Text="Log file:" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}"
+                  PlaceholderText="No log files" />
+      </Grid>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <ToggleButton Content="Dates" IsChecked="{Binding ShowDates}" ToolTip.Tip="Show the date on each line" />
+        <ToggleButton Content="Times" IsChecked="{Binding ShowTimes}" ToolTip.Tip="Show the time on each line" />
+        <ToggleButton Content="Channels" IsChecked="{Binding ShowChannels}" ToolTip.Tip="Show the [channel] on each line" />
+        <ToggleButton Content="Characters" IsChecked="{Binding ShowCharacters}" ToolTip.Tip="Show who said it" />
+        <ToggleButton Content="Cleanup" IsChecked="{Binding ShowCleanup}"
+                      ToolTip.Tip="Mark in red the lines Log Manager's Cleanup Logfile would remove (the channels unchecked in Options > Log Manager)" />
+        <Border Width="1" Background="#3F3F46" Margin="6,2" />
+        <Button Content="Copy" Click="OnCopyClick"
+                ToolTip.Tip="Copy the selected lines (Ctrl+C), as shown: hidden dates, times, channels and color codes are left out. Ctrl+A selects all." />
+        <Border Width="1" Background="#3F3F46" Margin="6,2" />
+        <TextBlock Text="Highlight:" VerticalAlignment="Center" />
+        <TextBox Text="{Binding HighlightText}" Width="240" PlaceholderText="word or phrase (separate several with commas)" />
+        <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Margin="12,0,0,0" Opacity="0.7" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+    </StackPanel>
+
+    <!-- Channel and character filters -->
+    <Grid DockPanel.Dock="Right" Width="250" Margin="12,10,0,0" RowDefinitions="*,*">
+      <DockPanel Grid.Row="0" Margin="0,0,0,8">
+        <TextBlock DockPanel.Dock="Top" Text="Channels" FontWeight="SemiBold" />
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="6" Margin="0,4">
+          <Button Classes="mini" Content="All" Command="{Binding CheckAllChannelsCommand}" />
+          <Button Classes="mini" Content="None" Command="{Binding UncheckAllChannelsCommand}" />
+        </StackPanel>
+        <Border BorderBrush="#3F3F46" BorderThickness="1">
+          <ListBox ItemsSource="{Binding ChannelItems}" SelectionMode="Single">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:FilterItemViewModel">
+                <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked}" Margin="6,1" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+      </DockPanel>
+
+      <DockPanel Grid.Row="1">
+        <TextBlock DockPanel.Dock="Top" Text="Characters" FontWeight="SemiBold" />
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="6" Margin="0,4">
+          <Button Classes="mini" Content="All" Command="{Binding CheckAllCharactersCommand}" />
+          <Button Classes="mini" Content="None" Command="{Binding UncheckAllCharactersCommand}" />
+        </StackPanel>
+        <Border BorderBrush="#3F3F46" BorderThickness="1">
+          <ListBox ItemsSource="{Binding CharacterItems}" SelectionMode="Single">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:FilterItemViewModel">
+                <CheckBox Content="{Binding Display}" IsChecked="{Binding IsChecked}" Margin="6,1" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+      </DockPanel>
+    </Grid>
+
+    <!-- The log -->
+    <Border Margin="0,10,0,0" BorderBrush="#3F3F46" BorderThickness="1" Background="#1E1E1E">
+      <ListBox x:Name="LogList" ItemsSource="{Binding VisibleLines}" SelectionMode="Multiple" Background="Transparent"
+               FontFamily="Cascadia Mono, Consolas, Courier New, monospace" FontSize="12.5"
+               ScrollViewer.HorizontalScrollBarVisibility="{Binding HorizontalScroll}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="m:LogLine">
+            <Grid ColumnDefinitions="60,*">
+              <TextBlock Text="{Binding Number}" Foreground="#5FA8FF" HorizontalAlignment="Right" Margin="0,0,10,0" />
+              <v:LogLineText Grid.Column="1" Line="{Binding}"
+                             Options="{Binding $parent[ListBox].((vm:LogViewerViewModel)DataContext).Display}" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Border>
+  </DockPanel>
+</UserControl>
