@@ -38,7 +38,9 @@ public sealed class WindowService
     {
         if ((Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow is not { } owner)
             return;
-        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "";
+        var assembly = Assembly.GetExecutingAssembly();
+        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0]
+                      ?? assembly.GetName().Version?.ToString(3) ?? "";
         await new MessageBox("About CityHelper", $"CityHelper {version}\n\nCity of Heroes helper tools.\n\nIncludes PopMenu Hero, created 2026 by RayolaRayons.").ShowDialog(owner);
     }
 

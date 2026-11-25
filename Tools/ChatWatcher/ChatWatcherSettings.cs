@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CityHelper.Services;
 
 namespace CityHelper.Tools.ChatWatcher;
 
@@ -41,11 +42,9 @@ public sealed class WatchFilter
         Name.Equals(MsrName, StringComparison.OrdinalIgnoreCase) ? Msr() : new WatchFilter { Name = Name };
 }
 
-/// <summary>Chat Watcher settings, stored in chatwatcher.ini in the application directory.</summary>
+/// <summary>Chat Watcher settings, stored in the [ChatWatcher.*] sections of CityHelper.ini.</summary>
 public sealed class ChatWatcherSettings
 {
-    public static string DefaultPath => Path.Combine(AppContext.BaseDirectory, "chatwatcher.ini");
-
     public List<WatchFilter> Filters { get; } = new();
 
     // What the pane itself currently shows (saved as you change it)
@@ -67,14 +66,14 @@ public sealed class ChatWatcherSettings
     public static ChatWatcherSettings Load(string? path = null)
     {
         var s = new ChatWatcherSettings();
-        path ??= DefaultPath;
+        var lines = IniStore.ReadLines("ChatWatcher", "chatwatcher.ini", path);
         bool loadedKeywords = false;
 
-        if (File.Exists(path))
+        if (lines != null)
         {
             string section = "";
             WatchFilter? filter = null;
-            foreach (var raw in File.ReadAllLines(path))
+            foreach (var raw in lines)
             {
                 var line = raw.Trim();
                 if (line.Length == 0 || line[0] is '#' or ';')
@@ -190,7 +189,7 @@ public sealed class ChatWatcherSettings
             sb.Append("broadcast = ").Append(Bool(f.Broadcast)).Append('\n');
             sb.Append("request = ").Append(Bool(f.Request)).Append("\n\n");
         }
-        File.WriteAllText(path ?? DefaultPath, sb.ToString());
+        IniStore.WriteText("ChatWatcher", sb.ToString(), path);
     }
 
     private static string Bool(bool b) => b ? "true" : "false";

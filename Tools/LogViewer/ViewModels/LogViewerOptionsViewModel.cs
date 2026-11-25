@@ -39,7 +39,7 @@ public sealed partial class LogViewerOptionsViewModel : OptionsSectionViewModel
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            return "Could not write logviewer.ini:\n" + ex.Message;
+            return "Could not write CityHelper.ini:\n" + ex.Message;
         }
         return null;
     }

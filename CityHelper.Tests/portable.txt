@@ -1,0 +1,1 @@
+Keeps CityHelper.ini beside the test program (see IniStore.DataDirectory).

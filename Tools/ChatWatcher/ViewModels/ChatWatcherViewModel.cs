@@ -156,7 +156,7 @@ public sealed partial class ChatWatcherViewModel : ViewModelBase
         try { _settings.Save(); }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            ResultText = "Could not write chatwatcher.ini: " + ex.Message;
+            ResultText = "Could not write CityHelper.ini: " + ex.Message;
         }
     }
 

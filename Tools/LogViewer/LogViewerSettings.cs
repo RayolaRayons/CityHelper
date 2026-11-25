@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using CityHelper.Services;
 
 namespace CityHelper.Tools.LogViewer;
 
@@ -12,11 +13,9 @@ public enum ColorCodeMode
     ShowRaw = 1,    // leave the tags in the text, as written in the log
 }
 
-/// <summary>Log Viewer options, stored in logviewer.ini in the application directory.</summary>
+/// <summary>Log Viewer options, stored in the [LogViewer.*] sections of CityHelper.ini.</summary>
 public sealed class LogViewerSettings
 {
-    public static string DefaultPath => Path.Combine(AppContext.BaseDirectory, "logviewer.ini");
-
     // Options window
     public ColorCodeMode ColorCodes { get; set; } = ColorCodeMode.Hide;
     public bool UseChannelColors { get; set; } = true;
@@ -34,11 +33,11 @@ public sealed class LogViewerSettings
     public static LogViewerSettings Load(string? path = null)
     {
         var s = new LogViewerSettings();
-        path ??= DefaultPath;
-        if (!File.Exists(path))
+        var lines = IniStore.ReadLines("LogViewer", "logviewer.ini", path);
+        if (lines is null)
             return s;
 
-        foreach (var raw in File.ReadAllLines(path))
+        foreach (var raw in lines)
         {
             var line = raw.Trim();
             int eq = line.IndexOf('=');
@@ -77,7 +76,7 @@ public sealed class LogViewerSettings
         sb.Append("show_channels = ").Append(B(ShowChannels)).Append('\n');
         sb.Append("show_characters = ").Append(B(ShowCharacters)).Append('\n');
         sb.Append("show_cleanup = ").Append(B(ShowCleanup)).Append('\n');
-        File.WriteAllText(path ?? DefaultPath, sb.ToString());
+        IniStore.WriteText("LogViewer", sb.ToString(), path);
     }
 
     private static string B(bool b) => b ? "true" : "false";

@@ -21,34 +21,7 @@ public sealed class PiggViewerTool : ITool
 
     public ViewModelBase CreateViewModel(AppState state) => _vm.Value;
 
-    public IReadOnlyList<RibbonGroup> FileGroups => new[]
-    {
-        new RibbonGroup("Archive", new[]
-        {
-            new RibbonCommand("Open Archive", _vm.Value.OpenArchiveCommand),
-            new RibbonCommand("Open Folder", _vm.Value.OpenFolderCommand),
-            new RibbonCommand("New From Folder", _vm.Value.NewFromFolderCommand),
-            new RibbonCommand("Close", _vm.Value.CloseCommand),
-        }),
-        new RibbonGroup("Installation", new[]
-        {
-            new RibbonCommand("Open Assets", _vm.Value.OpenAssetsCommand),
-            new RibbonCommand("Open Mods", _vm.Value.OpenModsCommand),
-        }),
-    };
-
-    public IReadOnlyList<RibbonGroup> RibbonGroups => new[]
-    {
-        new RibbonGroup("Export", new[]
-        {
-            new RibbonCommand("Export Files", _vm.Value.ExportFilesCommand),
-            new RibbonCommand("Export Folder", _vm.Value.ExportDirectoryCommand),
-        }),
-        new RibbonGroup("Texture", new[]
-        {
-            new RibbonCommand("Pack Texture", _vm.Value.PackTextureCommand),
-        }),
-    };
+    // The commands are in the toolbar at the top of the view; only Piglet's help links are in the main menu.
 
     // Piglet's own help links
     public IReadOnlyList<RibbonGroup> InformationGroups => new[]

@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.SystemSection.ViewModels"
+             x:Class="CityHelper.Tools.SystemSection.Views.SystemAboutView"
+             x:DataType="vm:SystemAboutViewModel">
+
+  <StackPanel Spacing="6">
+    <TextBlock Text="{Binding Headline}" FontWeight="SemiBold" />
+    <TextBlock Text="City of Heroes helper tools." />
+    <TextBlock Text="Includes PopMenu Hero, created 2026 by RayolaRayons." />
+  </StackPanel>
+</UserControl>

@@ -13,6 +13,9 @@ public interface ITool
 {
     string Name { get; }
 
+    /// <summary>True for the divider line between groups in the navigation list (it is not a tool and can't be selected).</summary>
+    bool IsSeparator => false;
+
     /// <summary>False for placeholder tools; finished tools are listed first in the navigation pane.</summary>
     bool IsComplete => true;
     ViewModelBase CreateViewModel(AppState state);

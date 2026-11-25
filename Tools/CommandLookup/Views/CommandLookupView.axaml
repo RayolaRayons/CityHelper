@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.CommandLookup.ViewModels"
+             x:Class="CityHelper.Tools.CommandLookup.Views.CommandLookupView"
+             x:DataType="vm:CommandLookupViewModel">
+
+  <UserControl.Styles>
+    <!-- The accordion headers -->
+    <Style Selector="Button.section">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Padding" Value="10,7" />
+      <Setter Property="Margin" Value="0,2,0,0" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid ColumnDefinitions="340,Auto,*" Margin="16">
+
+    <!-- Search, and the accordion: Commands and Emotes (one open at a time; the open one takes the room) -->
+    <DockPanel Grid.Column="0">
+      <TextBox DockPanel.Dock="Top" Text="{Binding Search}" PlaceholderText="search name, alias or description" Margin="0,0,0,8" />
+
+      <Grid x:Name="Accordion" RowDefinitions="Auto,*,Auto,0">
+        <Button Grid.Row="0" Classes="section" Content="{Binding CommandsHeader}" Click="OnToggleCommands" />
+        <Border Grid.Row="1" IsVisible="{Binding IsCommandsOpen}" BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
+          <ListBox ItemsSource="{Binding Commands}" SelectedItem="{Binding Selected}" SelectionMode="Single">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:CommandRow">
+                <StackPanel>
+                  <TextBlock Text="{Binding ListName}" FontWeight="SemiBold" />
+                  <TextBlock Text="{Binding ListAliases}" IsVisible="{Binding HasAliases}" Opacity="0.65" FontSize="11"
+                             TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+
+        <Button Grid.Row="2" Classes="section" Content="{Binding EmotesHeader}" Click="OnToggleEmotes" />
+        <Border Grid.Row="3" IsVisible="{Binding IsEmotesOpen}" BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
+          <ListBox ItemsSource="{Binding Emotes}" SelectedItem="{Binding SelectedEmote}" SelectionMode="Single">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:EmoteRow">
+                <StackPanel>
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                  <TextBlock Text="{Binding AliasText}" IsVisible="{Binding HasAliases}" Opacity="0.65" FontSize="11"
+                             TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+      </Grid>
+    </DockPanel>
+
+    <GridSplitter Grid.Column="1" Width="6" Background="Transparent" ResizeDirection="Columns" />
+
+    <!-- The selected emote -->
+    <ScrollViewer Grid.Column="2" IsVisible="{Binding ShowEmoteDetail}" Margin="6,0,0,0">
+      <StackPanel Spacing="12" DataContext="{Binding SelectedEmote}" x:DataType="vm:EmoteRow" Margin="0,0,12,0">
+        <TextBlock Text="{Binding Name}" FontSize="22" FontWeight="SemiBold" />
+
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Content="Copy" Click="OnCopyEmote" ToolTip.Tip="Copy the chat line that plays the emote" />
+        </StackPanel>
+
+        <TextBlock Text="{Binding Description}" IsVisible="{Binding HasDescription}" TextWrapping="Wrap" />
+
+        <StackPanel Spacing="2">
+          <TextBlock Text="Use" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBox Text="{Binding UseLine}" IsReadOnly="True" FontFamily="Cascadia Mono, Consolas, monospace" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasAliases}">
+          <TextBlock Text="Aliases" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding AliasText}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <TextBlock Text="From the wiki's Emotes page. Any alias plays the same animation as the emote."
+                   Opacity="0.55" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0" />
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- The selected command -->
+    <ScrollViewer Grid.Column="2" IsVisible="{Binding ShowCommandDetail}" Margin="6,0,0,0">
+      <StackPanel Spacing="12" DataContext="{Binding Selected}" x:DataType="vm:CommandRow" Margin="0,0,12,0">
+        <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" />
+
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Content="Copy" Click="OnCopy" ToolTip.Tip="Copy the command with its syntax" />
+          <Button Content="Open on Wiki" Click="OnOpenWiki" ToolTip.Tip="Open the command's page on the Homecoming wiki" />
+        </StackPanel>
+
+        <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+
+        <StackPanel Spacing="2">
+          <TextBlock Text="Syntax" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBox Text="{Binding SyntaxLine}" IsReadOnly="True" FontFamily="Cascadia Mono, Consolas, monospace" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasToggle}">
+          <TextBlock Text="Toggle (flips between 0 and 1)" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBox Text="{Binding ToggleText}" IsReadOnly="True" FontFamily="Cascadia Mono, Consolas, monospace" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasAliases}">
+          <TextBlock Text="Aliases" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding AliasText}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasKey}">
+          <TextBlock Text="Default key" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding KeyText}" />
+        </StackPanel>
+
+        <StackPanel Spacing="4" IsVisible="{Binding HasParams}">
+          <TextBlock Text="Parameters" FontWeight="SemiBold" Opacity="0.8" />
+          <Grid ColumnDefinitions="160,80,*,90" Margin="0,0,0,2">
+            <TextBlock Grid.Column="0" Text="Name" Opacity="0.65" FontSize="11" />
+            <TextBlock Grid.Column="1" Text="Type" Opacity="0.65" FontSize="11" />
+            <TextBlock Grid.Column="2" Text="Range / choices" Opacity="0.65" FontSize="11" />
+            <TextBlock Grid.Column="3" Text="" Opacity="0.65" FontSize="11" />
+          </Grid>
+          <ItemsControl ItemsSource="{Binding Params}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ParamRow">
+                <StackPanel Margin="0,2,0,6">
+                  <Grid ColumnDefinitions="160,80,*,90">
+                    <TextBlock Grid.Column="0" Text="{Binding Name}" FontFamily="Cascadia Mono, Consolas, monospace" />
+                    <TextBlock Grid.Column="1" Text="{Binding Type}" />
+                    <TextBlock Grid.Column="2" Text="{Binding Range}" />
+                    <TextBlock Grid.Column="3" Text="{Binding Requirement}" Opacity="0.7" />
+                  </Grid>
+                  <TextBlock IsVisible="{Binding HasDefault}" Margin="16,2,0,0" Opacity="0.85">
+                    <Run Text="Default: " /><Run Text="{Binding DefaultText}" />
+                  </TextBlock>
+                  <ItemsControl ItemsSource="{Binding Numbers}" IsVisible="{Binding HasNumbers}" Margin="16,2,0,0">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" Opacity="0.85" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasDetails}">
+          <TextBlock Text="Details" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding Details}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasExamples}">
+          <TextBlock Text="Examples" FontWeight="SemiBold" Opacity="0.8" />
+          <ItemsControl ItemsSource="{Binding Examples}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <TextBlock Text="{Binding}" FontFamily="Cascadia Mono, Consolas, monospace" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+
+        <TextBlock Text="From the wiki's List of Slash Commands and each command's own page. Parameter names, types and numbers are worked out from that text, so treat them as a guide."
+                   Opacity="0.55" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0" />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

@@ -9,19 +9,19 @@ using CityHelper.Tools.PopMenuHero.ViewModels;
 
 namespace CityHelper.Tools.PopMenuHero;
 
-/// <summary>Colour for a node kind: pale row backgrounds in the tree, dark ones for the property header.</summary>
+/// <summary>Colour for a node kind: translucent row backgrounds in the tree (they work on light and dark themes), dark ones for the property header.</summary>
 public sealed class NodeKindBrushConverter : IValueConverter
 {
     private static readonly Dictionary<NodeKind, IBrush> RowBrushes = new()
     {
-        [NodeKind.Menu] = Brush("#dceeff"),
-        [NodeKind.Option] = Brush("#dcffdc"),
-        [NodeKind.LockedOption] = Brush("#ffdcdc"),
-        [NodeKind.Dialog] = Brush("#fff0cc"),
-        [NodeKind.Title] = Brush("#ffffd0"),
-        [NodeKind.Text] = Brush("#dcfff0"),
-        [NodeKind.Divider] = Brush("#ebebeb"),
-        [NodeKind.Comment] = Brush("#e8e8f0"),
+        [NodeKind.Menu] = Brush("#384F9BE8"),
+        [NodeKind.Option] = Brush("#384CC24C"),
+        [NodeKind.LockedOption] = Brush("#38E85C5C"),
+        [NodeKind.Dialog] = Brush("#38F0B030"),
+        [NodeKind.Title] = Brush("#38E8E040"),
+        [NodeKind.Text] = Brush("#383CD0A0"),
+        [NodeKind.Divider] = Brush("#38909090"),
+        [NodeKind.Comment] = Brush("#388080C0"),
     };
 
     private static readonly Dictionary<NodeKind, IBrush> HeaderBrushes = new()

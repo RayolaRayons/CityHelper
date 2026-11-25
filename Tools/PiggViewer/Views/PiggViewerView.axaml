@@ -8,21 +8,64 @@
     <Style Selector="TreeViewItem" x:DataType="vm:DirectoryNodeViewModel">
       <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
     </Style>
+    <Style Selector="Button.mini">
+      <Setter Property="Padding" Value="8,2" />
+      <Setter Property="FontSize" Value="11" />
+    </Style>
     <Style Selector="TextBlock.header">
       <Setter Property="FontWeight" Value="SemiBold" />
       <Setter Property="Opacity" Value="0.8" />
     </Style>
   </UserControl.Styles>
 
-  <Grid RowDefinitions="Auto,*,Auto" Margin="12">
+  <Grid RowDefinitions="Auto,*" Margin="12">
 
-    <TextBlock Grid.Row="0" Text="{Binding MountText}" Opacity="0.75" Margin="0,0,0,8" TextTrimming="CharacterEllipsis" />
+    <!-- Toolbar: pick a folder or an archive of the installation, load it, export what is loaded -->
+    <StackPanel Grid.Row="0" Spacing="6" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="Folder:" VerticalAlignment="Center" />
+        <ComboBox MinWidth="150" ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder}"
+                  PlaceholderText="No folders" ToolTip.Tip="Folders of the installation's assets folder that hold archives" />
+        <Button Content="Load Folder" Command="{Binding LoadFolderCommand}"
+                ToolTip.Tip="Open every archive in the chosen folder together" />
+        <Border Width="1" Background="{DynamicResource ChBorder}" Margin="6,2" />
+        <TextBlock Text="File:" VerticalAlignment="Center" />
+        <ComboBox MinWidth="220" ItemsSource="{Binding Archives}" SelectedItem="{Binding SelectedArchive}"
+                  PlaceholderText="No archives" ToolTip.Tip="The archives (.pigg) in the chosen folder" />
+        <Button Content="Load File" Command="{Binding LoadArchiveCommand}"
+                ToolTip.Tip="Open the chosen archive" />
+        <Border Width="1" Background="{DynamicResource ChBorder}" Margin="6,2" />
+        <Button Content="{Binding ExportText}" Command="{Binding ExportCommand}"
+                ToolTip.Tip="Export the selection: the files selected in the list, or, if none are, the selected folder with everything under it" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Classes="mini" Content="Browse Folder..." Command="{Binding OpenFolderCommand}" />
+        <Button Classes="mini" Content="Browse Archive..." Command="{Binding OpenArchiveCommand}" />
+        <Button Classes="mini" Content="New From Folder..." Command="{Binding NewFromFolderCommand}"
+                ToolTip.Tip="Pack a folder into a new .pigg archive" />
+        <Button Classes="mini" Content="Pack Texture..." Command="{Binding PackTextureCommand}" />
+        <Button Classes="mini" Content="Close" Command="{Binding CloseCommand}" />
+        <Border Width="1" Background="{DynamicResource ChBorder}" Margin="6,2" />
+        <ComboBox Width="130" FontSize="12" ItemsSource="{Binding SearchFilters}" SelectedItem="{Binding SelectedSearchFilter}"
+                  ToolTip.Tip="What to search: All, Folder names only, or one type of file" />
+        <TextBox Text="{Binding SearchText}" Width="280" FontSize="12"
+                 PlaceholderText="search texture or folder name"
+                 ToolTip.Tip="Finds the word in folder names and texture (file) names of what is loaded. Enter = next, Shift+Enter = previous.">
+          <TextBox.KeyBindings>
+            <KeyBinding Gesture="Enter" Command="{Binding NextResultCommand}" />
+            <KeyBinding Gesture="Shift+Enter" Command="{Binding PreviousResultCommand}" />
+          </TextBox.KeyBindings>
+        </TextBox>
+        <Button Classes="mini" Content="◀" Command="{Binding PreviousResultCommand}" ToolTip.Tip="Previous match (Shift+Enter)" />
+        <Button Classes="mini" Content="▶" Command="{Binding NextResultCommand}" ToolTip.Tip="Next match (Enter)" />
+      </StackPanel>
+    </StackPanel>
 
     <Grid Grid.Row="1" ColumnDefinitions="260,Auto,*">
 
       <!-- Folder tree -->
-      <Border Grid.Column="0" BorderBrush="#3F3F46" BorderThickness="1">
-        <TreeView ItemsSource="{Binding Roots}" SelectedItem="{Binding SelectedDirectory}">
+      <Border Grid.Column="0" BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
+        <TreeView x:Name="DirTree" ItemsSource="{Binding Roots}" SelectedItem="{Binding SelectedDirectory}">
           <TreeView.ItemTemplate>
             <TreeDataTemplate x:DataType="vm:DirectoryNodeViewModel" ItemsSource="{Binding Children}">
               <TextBlock Text="{Binding Name}" />
@@ -49,7 +92,7 @@
             <TextBlock Grid.Column="3" Classes="header" Text="Size" HorizontalAlignment="Right" />
             <TextBlock Grid.Column="4" Classes="header" Text="Packed" HorizontalAlignment="Right" />
           </Grid>
-          <Border BorderBrush="#3F3F46" BorderThickness="1">
+          <Border BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
             <ListBox x:Name="FileList" ItemsSource="{Binding Files}" SelectionMode="Multiple">
               <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:FileRowViewModel">
@@ -74,12 +117,11 @@
         <GridSplitter Grid.Row="1" Height="6" Background="Transparent" ResizeDirection="Rows" />
 
         <!-- Preview of the selected file: texture, text or hex -->
-        <Border Grid.Row="2" BorderBrush="#3F3F46" BorderThickness="1">
+        <Border Grid.Row="2" BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
           <ContentControl Content="{Binding Preview}" />
         </Border>
       </Grid>
     </Grid>
 
-    <TextBlock Grid.Row="2" Text="{Binding StatusText}" Margin="0,8,0,0" Opacity="0.75" TextTrimming="CharacterEllipsis" />
   </Grid>
 </UserControl>

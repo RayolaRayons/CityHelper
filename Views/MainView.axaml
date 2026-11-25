@@ -32,73 +32,71 @@
       <Setter Property="Background" Value="#1C97EA"/>
       <Setter Property="Foreground" Value="White"/>
     </Style>
+    <Style Selector="Menu MenuItem MenuItem">
+            <Setter Property="Command" Value="{ReflectionBinding Command}"/>
+            <Setter Property="ToolTip.Tip" Value="{ReflectionBinding Tooltip}"/>
+            <Setter Property="IsHitTestVisible" Value="{ReflectionBinding !IsSeparator}"/>
+            <Setter Property="Padding" Value="8,4"/>
+          </Style>
   </UserControl.Styles>
-  <Grid RowDefinitions="Auto,*,Auto">
 
-    <!-- Ribbon: full width, fixed height -->
-    <Border Grid.Row="0" Height="120" Background="#2D2D30"
-            BorderBrush="#3F3F46" BorderThickness="0,0,0,1">
-      <TabControl ItemsSource="{Binding RibbonTabs}" SelectedItem="{Binding SelectedRibbonTab}">
-        <TabControl.ItemTemplate>
-          <DataTemplate x:DataType="rb:RibbonTab"><TextBlock Text="{Binding Header}"/></DataTemplate>
-        </TabControl.ItemTemplate>
-        <TabControl.ContentTemplate>
-          <DataTemplate x:DataType="rb:RibbonTab">
-            <!-- Scrolls sideways when a tool has more buttons than the window is wide -->
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-            <ItemsControl ItemsSource="{Binding Groups}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="rb:RibbonGroup">
-                  <Border BorderBrush="#3F3F46" BorderThickness="0,0,1,0" Padding="8,0">
-                    <DockPanel>
-                      <TextBlock DockPanel.Dock="Bottom" Text="{Binding Header}"
-                                 HorizontalAlignment="Center" FontSize="11" Opacity="0.6"/>
-                      <ItemsControl ItemsSource="{Binding Commands}">
-                        <ItemsControl.ItemsPanel>
-                          <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4"/></ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                          <DataTemplate x:DataType="rb:RibbonCommand">
-                            <Button Content="{Binding Label}" Command="{Binding Command}"
-                                    ToolTip.Tip="{Binding Tooltip}"
-                                    MinWidth="72" Height="48" VerticalAlignment="Center"/>
-                          </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                      </ItemsControl>
-                    </DockPanel>
-                  </Border>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            </ScrollViewer>
+  <UserControl.DataTemplates>
+          <TreeDataTemplate DataType="rb:RibbonTab" ItemsSource="{Binding Entries}">
+            <TextBlock Text="{Binding Header}"/>
+          </TreeDataTemplate>
+          <TreeDataTemplate DataType="rb:RibbonGroup" ItemsSource="{Binding Commands}">
+            <TextBlock Text="{Binding Header}"/>
+          </TreeDataTemplate>
+          <DataTemplate DataType="rb:RibbonCommand">
+            <Panel>
+              <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding !IsSeparator}">
+                <PathIcon Data="{Binding Icon}" Width="16" Height="16"/>
+                <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+              </StackPanel>
+              <Border Height="1" Background="{DynamicResource ChBorder}" Margin="0,3" MinWidth="120"
+                      IsVisible="{Binding IsSeparator}"/>
+            </Panel>
           </DataTemplate>
-        </TabControl.ContentTemplate>
-      </TabControl>
-    </Border>
+  </UserControl.DataTemplates>
+  <Grid RowDefinitions="*,Auto">
 
-    <Grid Grid.Row="1" ColumnDefinitions="260,Auto,*">
+    <Grid Grid.Row="0" ColumnDefinitions="260,Auto,*">
 
       <!-- Left column -->
       <Grid Grid.Column="0" MinWidth="160">
         <ListBox ItemsSource="{Binding Tools}"
                  SelectedItem="{Binding SelectedTool}">
+          <!-- The divider between the two groups is a disabled item: a line, not selectable -->
+          <ListBox.Styles>
+            <Style Selector="ListBoxItem" x:DataType="tools:ITool">
+              <Setter Property="IsEnabled" Value="{Binding !IsSeparator}" />
+            </Style>
+          </ListBox.Styles>
           <ListBox.ItemTemplate>
-            <DataTemplate x:DataType="tools:ITool"><TextBlock Text="{Binding Name}"/></DataTemplate>
+            <DataTemplate x:DataType="tools:ITool">
+              <Panel>
+                <TextBlock Text="{Binding Name}" IsVisible="{Binding !IsSeparator}"/>
+                <Border Height="1" Margin="0,6" Background="{DynamicResource ChBorder}" IsVisible="{Binding IsSeparator}"/>
+              </Panel>
+            </DataTemplate>
           </ListBox.ItemTemplate>
         </ListBox>
       </Grid>
 
-      <GridSplitter Grid.Column="1" Width="5" Background="#3F3F46" ResizeDirection="Columns"/>
+      <GridSplitter Grid.Column="1" Width="5" Background="{DynamicResource ChBorder}" ResizeDirection="Columns"/>
 
       <!-- Content pane: view chosen by ViewLocator from the tool's view model -->
-      <ContentControl Grid.Column="2" Content="{Binding CurrentContent}"/>
+      <DockPanel Grid.Column="2">
+        <Border DockPanel.Dock="Top" Background="{DynamicResource ChPanel}" BorderBrush="{DynamicResource ChBorder}" BorderThickness="0,0,0,1"
+                IsVisible="{Binding HasToolMenus}">
+          <Menu ItemsSource="{Binding ToolMenus}"/>
+        </Border>
+        <ContentControl Content="{Binding CurrentContent}"/>
+      </DockPanel>
     </Grid>
 
     <!-- Status bar: full width. Left = selection segments, right = reserved for tool status messages -->
-    <Border Grid.Row="2" Background="#007ACC" Height="26">
+    <Border Grid.Row="1" Background="#007ACC" Height="26">
       <Grid ColumnDefinitions="Auto,*,Auto">
         <StackPanel Grid.Column="0" Orientation="Horizontal">
           <TextBlock Text="Installation:" Foreground="White" Opacity="0.75" FontSize="12"
@@ -128,7 +126,9 @@
             </Button.Flyout>
           </Button>
         </StackPanel>
-        <!-- Grid.Column="2": future tool status messages -->
+        <TextBlock Grid.Column="1" Text="{Binding ToolStatus}" Foreground="White" FontSize="12"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" Margin="12,0,10,0"
+                   TextTrimming="CharacterEllipsis" />
       </Grid>
     </Border>
   </Grid>

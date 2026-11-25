@@ -114,7 +114,7 @@ public sealed partial class ConfigSyncViewModel : ViewModelBase
         var env = settings.Effective(inst.Name);
         var gameEnv = settings.Find(inst.Name)?.GameEnvironment ?? SyncItems.DefaultGameEnvironment;
         var backup = string.IsNullOrWhiteSpace(env.BackupFolder) ? null : env.BackupFolder;
-        EnvironmentText = $"Environment: {inst.Name}   Account: {account.Name}   Sync folder: {backup ?? "(not set)"}";
+        EnvironmentText = $"Sync folder: {backup ?? "(not set)"}";
 
         foreach (var item in SyncItems.All.Where(i => env.EnabledItems.Contains(i.Key)))
         {
@@ -125,18 +125,19 @@ public sealed partial class ConfigSyncViewModel : ViewModelBase
                 exclude is null ? null : Path.Combine(inst.Path, exclude),
                 backup is null ? null : rels.Select(r => Path.Combine(backup, r)).ToList(),
                 backup is null || exclude is null ? null : Path.Combine(backup, exclude),
-                OnRowSync) { IsMerge = (item.Key == "logfiles" && env.MergeLogfiles) || (item.Key == "private_logs" && env.MergePrivateLogs) });
+                OnRowSync) { IsMerge = (item.Key == "logfiles" && env.MergeLogfiles) || (item.Key == "private_logs" && env.MergePrivateLogs),
+                    ValidateOrphans = settings.ValidateOrphanedLogs && item.Key == "logfiles" });
         }
 
-        StatusText = Rows.Count == 0 ? "No items are enabled for this environment (see File > Options)."
-                   : backup is null ? "No sync folder is set for this environment (see File > Options)."
+        StatusText = Rows.Count == 0 ? "No items are enabled for this environment (see Options)."
+                   : backup is null ? "No sync folder is set for this environment (see Options)."
                    : "";
 
         // File system scans can be slow (logs, mods), so keep them off the UI thread
         var rows = Rows.ToList();
         var times = await Task.Run(() => rows.Select(r => (Local: FileStamp.Latest(r.LocalPaths, r.LocalExclude, r.Item.FilePattern, r.Item.Recursive),
                                                           Sync: r.SyncPaths is null ? null : FileStamp.Latest(r.SyncPaths, r.SyncExclude, r.Item.FilePattern, r.Item.Recursive),
-                                                          Differs: r.IsMerge && r.SyncPaths is not null && LogMerger.HasDifferences(r.LocalPaths[0], r.SyncPaths[0]))).ToList());
+                                                          Differs: r.IsMerge && r.SyncPaths is not null && LogMerger.HasDifferences(r.LocalPaths[0], r.SyncPaths[0], r.ValidateOrphans))).ToList());
         if (version != _version)
             return;     // selection changed while scanning
 
@@ -154,7 +155,7 @@ public sealed partial class ConfigSyncViewModel : ViewModelBase
 
     /// <summary>Creates the Options window section for this tool (no view model needed, so nothing is scanned).</summary>
     public static ConfigSyncOptionsViewModel CreateOptions(AppState state) =>
-        new(state.Installations.Select(i => i.Name).ToList(), LoadSettings(state));
+        new(state.Installations.Select(i => i.Name).ToList(), LoadSettings(state), state);
 
     // --- Syncing ---
 
@@ -194,25 +195,7 @@ public sealed partial class ConfigSyncViewModel : ViewModelBase
         StatusText = summary;
     }
 
-    private static CopyResult CopyRow(SyncRowViewModel row)
-    {
-        var result = new CopyResult();
-        if (row.SyncPaths is null)
-            return result;
-        if (row.IsMerge)
-            return LogMerger.Merge(row.LocalPaths[0], row.SyncPaths[0]);
-        if (row.Direction == SyncDirection.None)
-            return result;
-
-        bool toSync = row.Direction == SyncDirection.LocalToSync;
-        var from = toSync ? row.LocalPaths : row.SyncPaths;
-        var to = toSync ? row.SyncPaths : row.LocalPaths;
-        var exclude = toSync ? row.LocalExclude : row.SyncExclude;
-
-        for (int i = 0; i < from.Count; i++)
-            result.Add(FileCopier.Copy(from[i], to[i], exclude, row.Item.FilePattern, row.Item.Recursive));
-        return result;
-    }
+    private static CopyResult CopyRow(SyncRowViewModel row) => ConfigSyncRunner.CopyRow(row);
 }
 
 internal static class FileStamp

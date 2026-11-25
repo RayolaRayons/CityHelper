@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.BadgeLookup.ViewModels"
+             x:Class="CityHelper.Tools.BadgeLookup.Views.BadgeLookupView"
+             x:DataType="vm:BadgeLookupViewModel">
+
+  <Grid ColumnDefinitions="380,Auto,*" Margin="16">
+
+    <DockPanel Grid.Column="0">
+      <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="0,0,0,8">
+        <TextBox Text="{Binding Search}" PlaceholderText="search name, description or id" />
+        <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" HorizontalAlignment="Stretch" />
+      </StackPanel>
+      <Border BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
+        <ListBox ItemsSource="{Binding Badges}" SelectedItem="{Binding Selected}" SelectionMode="Single">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:BadgeRow">
+              <StackPanel>
+                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding Category}" Opacity="0.65" FontSize="11" TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Border>
+    </DockPanel>
+
+    <GridSplitter Grid.Column="1" Width="6" Background="Transparent" ResizeDirection="Columns" />
+
+    <ScrollViewer Grid.Column="2" IsVisible="{Binding HasSelection}" Margin="6,0,0,0">
+      <StackPanel Spacing="12" DataContext="{Binding Selected}" x:DataType="vm:BadgeRow" Margin="0,0,12,0">
+        <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" />
+
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Content="Copy Name" Click="OnCopyName" ToolTip.Tip="Copy the badge name" />
+        </StackPanel>
+
+        <StackPanel Spacing="2">
+          <TextBlock Text="Category" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding Category}" />
+        </StackPanel>
+
+        <StackPanel Spacing="2">
+          <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding DescriptionsDiffer}">
+          <TextBlock Text="Villain description" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding VillainDescription}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasRequirements}">
+          <TextBlock Text="Requirements" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding Requirements}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasNotes}">
+          <TextBlock Text="Notes" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding Notes}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Spacing="2" IsVisible="{Binding HasReleaseDate}">
+          <TextBlock Text="Released" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding ReleaseDate}" />
+        </StackPanel>
+
+        <StackPanel Spacing="2">
+          <TextBlock Text="Internal name" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBox Text="{Binding InternalName}" IsReadOnly="True" FontFamily="Cascadia Mono, Consolas, monospace" />
+        </StackPanel>
+
+        <StackPanel Spacing="2">
+          <TextBlock Text="Icon" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBox Text="{Binding IconText}" IsReadOnly="True" FontFamily="Cascadia Mono, Consolas, monospace" />
+        </StackPanel>
+
+        <StackPanel Spacing="2">
+          <TextBlock Text="Badge id" FontWeight="SemiBold" Opacity="0.8" />
+          <TextBlock Text="{Binding BadgeId}" />
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

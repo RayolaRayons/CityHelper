@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using CityHelper.Services;
 using CityHelper.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -126,9 +127,10 @@ public sealed partial class ConfigSyncOptionsViewModel : OptionsSectionViewModel
     private readonly ConfigSyncSettings _settings;
     private bool _updating;
 
-    public ConfigSyncOptionsViewModel(IReadOnlyList<string> environmentNames, ConfigSyncSettings settings)
+    public ConfigSyncOptionsViewModel(IReadOnlyList<string> environmentNames, ConfigSyncSettings settings, AppState? state = null)
     {
         _settings = settings;
+        _validateOrphanedLogs = settings.ValidateOrphanedLogs;
         foreach (var name in environmentNames)
         {
             var env = settings.Find(name) ?? ConfigSyncSettings.NewEnvironment(name, false);
@@ -139,15 +141,38 @@ public sealed partial class ConfigSyncOptionsViewModel : OptionsSectionViewModel
 
         foreach (var e in Environments.Where(e => e.UseDefault && DefaultEditor != null))
             e.ShowInherited(DefaultEditor!);
-        SelectedEnvironment = Environments.FirstOrDefault(e => e.IsDefault) ?? Environments.FirstOrDefault();
+        // There is no picker: the settings shown are always those of the installation selected in the status bar
+        SelectedEnvironment = EditorFor(state?.SelectedInstallation?.Name)
+                              ?? Environments.FirstOrDefault(e => e.IsDefault) ?? Environments.FirstOrDefault();
+        if (state != null)
+        {
+            // Follows the status bar while this page is open (a weak link, so closed pages are not kept alive)
+            var weak = new WeakReference<ConfigSyncOptionsViewModel>(this);
+            System.ComponentModel.PropertyChangedEventHandler? handler = null;
+            handler = (_, e) =>
+            {
+                if (!weak.TryGetTarget(out var vm))
+                    state.PropertyChanged -= handler;
+                else if (e.PropertyName == nameof(AppState.SelectedInstallation) && vm.EditorFor(state.SelectedInstallation?.Name) is { } editor)
+                    vm.SelectedEnvironment = editor;
+            };
+            state.PropertyChanged += handler;
+        }
     }
 
     public override string Title => "Config Sync";
+
+    private EnvironmentEditor? EditorFor(string? installationName) =>
+        installationName is null ? null : Environments.FirstOrDefault(e => e.Name.Equals(installationName, StringComparison.OrdinalIgnoreCase));
 
     public ObservableCollection<EnvironmentEditor> Environments { get; } = new();
 
     [ObservableProperty]
     private EnvironmentEditor? _selectedEnvironment;
+
+    /// <summary>Applies to all environments.</summary>
+    [ObservableProperty]
+    private bool _validateOrphanedLogs;
 
     partial void OnSelectedEnvironmentChanged(EnvironmentEditor? value)
     {
@@ -199,13 +224,14 @@ public sealed partial class ConfigSyncOptionsViewModel : OptionsSectionViewModel
         foreach (var e in Environments)
             _settings.Environments.Add(e.ToSettings());
         _settings.DefaultEnvironment = DefaultEditor?.Name ?? _settings.DefaultEnvironment;
+        _settings.ValidateOrphanedLogs = ValidateOrphanedLogs;
         try
         {
             _settings.Save();
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
         {
-            return "Could not write configsync.ini:\n" + ex.Message;
+            return "Could not write CityHelper.ini:\n" + ex.Message;
         }
         return null;
     }

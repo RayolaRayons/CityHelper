@@ -7,18 +7,16 @@ using CityHelper.Models;
 namespace CityHelper.Services;
 
 /// <summary>
-/// Reads/writes the installation list to installations.ini in the application directory.
+/// Reads/writes the installation list in the [Installations.*] sections of CityHelper.ini.
 /// One [InstallationN] section per entry, in list order; exactly one carries default = true.
 /// </summary>
 public static class InstallationStore
 {
-    public static string DefaultPath => System.IO.Path.Combine(AppContext.BaseDirectory, "installations.ini");
-
     /// <summary>Returns null if the file doesn't exist.</summary>
     public static List<Installation>? Load(string? path = null)
     {
-        path ??= DefaultPath;
-        if (!File.Exists(path))
+        var lines = IniStore.ReadLines("Installations", "installations.ini", path);
+        if (lines is null)
             return null;
 
         var result = new List<Installation>();
@@ -33,7 +31,7 @@ public static class InstallationStore
             isDefault = false;
         }
 
-        foreach (var raw in File.ReadAllLines(path))
+        foreach (var raw in lines)
         {
             var line = raw.Trim();
             if (line.Length == 0 || line[0] is '#' or ';')
@@ -71,7 +69,7 @@ public static class InstallationStore
             sb.Append("path = ").Append(item.Path).Append('\n');
             sb.Append("default = ").Append(item.IsDefault ? "true" : "false").Append("\n\n");
         }
-        File.WriteAllText(path ?? DefaultPath, sb.ToString());
+        IniStore.WriteText("Installations", sb.ToString(), path);
     }
 
     /// <summary>Exactly one default: the first flagged entry, otherwise the top item.</summary>

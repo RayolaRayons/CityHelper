@@ -68,30 +68,35 @@ public static class ChannelColors
 {
     private static readonly Dictionary<string, Color> Known = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["Local"] = Color.Parse("#E8E8E8"),
-        ["Broadcast"] = Color.Parse("#FFD866"),
-        ["Team"] = Color.Parse("#7FB2FF"),
-        ["Supergroup"] = Color.Parse("#6EE7A0"),
-        ["League"] = Color.Parse("#FFA559"),
-        ["Coalition"] = Color.Parse("#D49BFF"),
-        ["Tell"] = Color.Parse("#FF8FE8"),
-        ["Request"] = Color.Parse("#5EE3D8"),
-        ["Help"] = Color.Parse("#B4B4B4"),
-        ["Looking For Group"] = Color.Parse("#A8E86B"),
-        ["NPC"] = Color.Parse("#C9B28A"),
-        ["Pet"] = Color.Parse("#C7A6FF"),
-        ["Combat"] = Color.Parse("#FF8A80"),
-        ["Emote"] = Color.Parse("#FFB86B"),
-        ["System"] = Color.Parse("#9AA0A6"),
-        ["Caption"] = Color.Parse("#FFD0A0"),
-        ["PPD"] = Color.Parse("#9AA0A6"),
-        ["FDPC"] = Color.Parse("#9AA0A6"),
-        ["Nemesis"] = Color.Parse("#9AA0A6"),
-        ["Vanguard"] = Color.Parse("#9AA0A6"),
+        ["Local"] = Color.Parse("#FFFFFF"),
+        ["General"] = Color.Parse("#F4F4A0"),
+        ["Broadcast"] = Color.Parse("#D8D8D8"),
+        ["Team"] = Color.Parse("#4CD84C"),
+        ["Supergroup"] = Color.Parse("#33C8F0"),
+        ["League"] = Color.Parse("#8FA8F0"),
+        ["Coalition"] = Color.Parse("#FFD060"),
+        ["Tell"] = Color.Parse("#FFE81F"),
+        ["Request"] = Color.Parse("#C47CF0"),
+        ["Help"] = Color.Parse("#8FA8F0"),
+        ["Looking For Group"] = Color.Parse("#30B8C0"),
+        ["NPC"] = Color.Parse("#8080F0"),
+        ["Pet"] = Color.Parse("#C8C8E0"),
+        ["Combat"] = Color.Parse("#FF8C28"),
+        ["Emote"] = Color.Parse("#FFFFFF"),
+        ["System"] = Color.Parse("#3CC83C"),
+        ["Reward"] = Color.Parse("#F4F060"),
+        ["Auction"] = Color.Parse("#C47CF0"),
+        ["Caption"] = Color.Parse("#7C7CF0"),
+        ["PPD"] = Color.Parse("#B884F0"),
+        ["FDPC"] = Color.Parse("#D8305A"),
+        ["Nemesis"] = Color.Parse("#D8305A"),
+        ["Council"] = Color.Parse("#B884F0"),
+        ["Rikti"] = Color.Parse("#B884F0"),
+        ["Vanguard"] = Color.Parse("#B884F0"),
     };
 
-    // General, supergroup-named and player channels
-    private static readonly Color Custom = Color.Parse("#8AB4F8");
+    // Player-made channels (Afterhours, GEMINI, CU Chat, Everlasting TFs...), pale aqua like in the game
+    private static readonly Color Custom = Color.Parse("#7FF0D8");
 
     public static Color For(string channelKey) => Known.TryGetValue(channelKey, out var c) ? c : Custom;
 }

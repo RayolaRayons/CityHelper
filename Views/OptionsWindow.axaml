@@ -15,7 +15,7 @@
           <DataTemplate x:DataType="vm:OptionsSectionViewModel">
             <StackPanel Spacing="10" Margin="0,0,0,24">
               <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" />
-              <Border BorderBrush="#3F3F46" BorderThickness="0,1,0,0" />
+              <Border BorderBrush="{DynamicResource ChBorder}" BorderThickness="0,1,0,0" />
               <ContentControl Content="{Binding}" />
             </StackPanel>
           </DataTemplate>

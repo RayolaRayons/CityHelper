@@ -31,34 +31,44 @@ public sealed partial class LogOptionsViewModel : OptionsSectionViewModel
     public LogOptionsViewModel(LogManagerSettings settings)
     {
         _settings = settings;
-        _selectedPreset = settings.Preset;
-        _backupMergedFiles = settings.BackupMergedFiles;
+        _keepCopies = settings.KeepCopies;
+        _copiesFolder = settings.CopiesFolder;
+        _selectedSystemFix = settings.SystemChannelFix;
+        _validateOrphanedDailies = settings.ValidateOrphanedDailies;
+        _selectedMergeMode = settings.MergeMode;
         Channels = LogChannels.All.Select(c => new ChannelToggle(c, settings.IncludedChannels.Contains(c))).ToList();
     }
 
     public override string Title => "Log Manager";
 
-    public IReadOnlyList<string> Presets => LogManagerSettings.Presets;
     public IReadOnlyList<ChannelToggle> Channels { get; }
 
     [ObservableProperty]
-    private string _selectedPreset;
+    private bool _keepCopies;
 
     [ObservableProperty]
-    private bool _backupMergedFiles;
+    private string _copiesFolder = "";
 
-    partial void OnSelectedPresetChanged(string value)
-    {
-        // RP selects exactly its channels; None leaves the checkboxes as they are
-        if (value == LogManagerSettings.PresetRp)
-            foreach (var c in Channels)
-                c.IsChecked = LogChannels.RpPreset.Contains(c.Channel);
-    }
+    public IReadOnlyList<string> SystemFixModes => LogManagerSettings.SystemFixModes;
+
+    [ObservableProperty]
+    private string _selectedSystemFix;
+
+    [ObservableProperty]
+    private bool _validateOrphanedDailies;
+
+    public IReadOnlyList<string> MergeModes => LogManagerSettings.MergeModes;
+
+    [ObservableProperty]
+    private string _selectedMergeMode;
 
     public override string? Save()
     {
-        _settings.Preset = SelectedPreset;
-        _settings.BackupMergedFiles = BackupMergedFiles;
+        _settings.KeepCopies = KeepCopies;
+        _settings.CopiesFolder = CopiesFolder.Trim();
+        _settings.SystemChannelFix = SelectedSystemFix;
+        _settings.ValidateOrphanedDailies = ValidateOrphanedDailies;
+        _settings.MergeMode = SelectedMergeMode;
         _settings.IncludedChannels = Channels.Where(c => c.IsChecked).Select(c => c.Channel).ToHashSet();
         try
         {
@@ -66,7 +76,7 @@ public sealed partial class LogOptionsViewModel : OptionsSectionViewModel
         }
         catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
         {
-            return "Could not write logmanager.ini:\n" + ex.Message;
+            return "Could not write CityHelper.ini:\n" + ex.Message;
         }
         return null;
     }

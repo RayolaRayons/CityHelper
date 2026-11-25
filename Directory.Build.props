@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <AvaloniaVersion>12.1.4</AvaloniaVersion>
+    <!-- Assembly versions are capped at 65535 per part, so the date version (InformationalVersion) is carried as the Version plus the label below -->
+    <Version>2026.15.0</Version>
+    <InformationalVersion>20261124</InformationalVersion>
+    <Product>CityHelper</Product>
+    <Company>RayolaRayons</Company>
+  </PropertyGroup>
+</Project>

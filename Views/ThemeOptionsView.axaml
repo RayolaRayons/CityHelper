@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.ViewModels"
+             x:Class="CityHelper.Views.ThemeOptionsView"
+             x:DataType="vm:ThemeOptionsViewModel">
+
+  <StackPanel Spacing="8">
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <TextBlock Text="Theme:" VerticalAlignment="Center" />
+      <ComboBox MinWidth="160" ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}" />
+    </StackPanel>
+    <TextBlock Text="Light or Dark applies to every section. System follows your Windows setting. The change takes effect when you save the options."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+
+    <TextBlock Text="Macro images" FontWeight="SemiBold" Margin="0,16,0,0" />
+    <TextBlock Text="The icon pictures and texture names from the Homecoming wiki's Macro image page, kept in a local cache for PopMenu Hero's icon lookup. A copy is built into the program and unpacks itself the first time it is needed; Sync updates it from the wiki (only missing pictures are downloaded)."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <Button Content="Set Up / Sync Macro Images..." Click="OnSyncMacroImages" />
+      <TextBlock Text="{Binding MacroImageStatus}" VerticalAlignment="Center" Opacity="0.8" />
+    </StackPanel>
+
+    <TextBlock Text="Slash commands" FontWeight="SemiBold" Margin="0,16,0,0" />
+    <TextBlock Text="The command list from the wiki's List of Slash Commands, plus each command's own page (details, examples, the numbers its parameter takes, and the ++toggle form of 0/1 commands), as JSON. A copy is built into the program, so nothing is parsed on each start. Reparse reads the list and every command page again, one at a time (the wiki limits how fast it can be read, so it takes several minutes; Cancel keeps the current list). The result is kept in Cache\SlashCommands."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <Button Content="Reparse Slash Commands..." Click="OnReparseSlashCommands" />
+      <TextBlock Text="{Binding SlashCommandStatus}" VerticalAlignment="Center" Opacity="0.8" />
+    </StackPanel>
+
+    <TextBlock Text="Emotes" FontWeight="SemiBold" Margin="0,16,0,0" />
+    <TextBlock Text="The emotes from the wiki's Emotes page (the emote, its aliases and its description) as JSON, shown in Command Lookup. A copy is built into the program, so nothing is parsed on each start. Reparse reads the page again (a single page, so it is quick) and keeps the result in Cache\Emotes."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <Button Content="Reparse Emotes..." Click="OnReparseEmotes" />
+      <TextBlock Text="{Binding EmoteStatus}" VerticalAlignment="Center" Opacity="0.8" />
+    </StackPanel>
+
+    <TextBlock Text="Badges" FontWeight="SemiBold" Margin="0,16,0,0" />
+    <TextBlock Text="The badge list shown in Badge Lookup. A copy is built into the program. Update downloads the current badges-all.json from hcvault.cityofheroes.dev (one request) and keeps it in Cache\Badges."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <Button Content="Update Badges" Click="OnUpdateBadges" />
+      <TextBlock Text="{Binding BadgeStatus}" VerticalAlignment="Center" Opacity="0.8" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

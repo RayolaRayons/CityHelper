@@ -35,7 +35,16 @@ public sealed partial class PlayerNoteRowViewModel : ObservableObject
     [ObservableProperty] private string _characters;
     [ObservableProperty] private string _notes;
 
-    partial void OnNameChanged(string value) => _changed();
+    partial void OnNameChanged(string value)
+    {
+        // Global names are written without the @ (typed or pasted as "@name")
+        if (value != null && value.TrimStart().StartsWith('@'))
+        {
+            Name = value.TrimStart().TrimStart('@');
+            return;                                     // the change to the cleaned name calls this again
+        }
+        _changed();
+    }
     partial void OnStarsChanged(int value) => _changed();
     partial void OnCharactersChanged(string value) => _changed();
     partial void OnNotesChanged(string value) => _changed();
@@ -59,10 +68,11 @@ public sealed partial class PlayerNoteRowViewModel : ObservableObject
     public PlayerNote ToNote() =>
         new(Name ?? "", Math.Clamp(Stars, 0, 5), Characters ?? "", Notes ?? "");
 
-    /// <summary>True if the filter is part of the global name or of any one of the comma separated character names.</summary>
+    /// <summary>True if the filter is part of the global name, of any one of the comma separated character names, or of the notes.</summary>
     public bool Matches(string filter) =>
         (Name ?? "").Contains(filter, StringComparison.OrdinalIgnoreCase) ||
-        (Characters ?? "").Split(',').Any(c => c.Trim().Contains(filter, StringComparison.OrdinalIgnoreCase));
+        (Characters ?? "").Split(',').Any(c => c.Trim().Contains(filter, StringComparison.OrdinalIgnoreCase)) ||
+        (Notes ?? "").Contains(filter, StringComparison.OrdinalIgnoreCase);
 
     [RelayCommand]
     private void Remove() => _remove(this);

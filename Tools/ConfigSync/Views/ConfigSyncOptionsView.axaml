@@ -6,25 +6,24 @@
 
   <StackPanel Spacing="14">
 
-    <StackPanel Orientation="Horizontal" Spacing="10">
-      <TextBlock Text="Environment:" VerticalAlignment="Center" />
-      <ComboBox MinWidth="280" ItemsSource="{Binding Environments}" SelectedItem="{Binding SelectedEnvironment}">
-        <ComboBox.ItemTemplate>
-          <DataTemplate x:DataType="vm:EnvironmentEditor">
-            <TextBlock Text="{Binding Name}" />
-          </DataTemplate>
-        </ComboBox.ItemTemplate>
-      </ComboBox>
-    </StackPanel>
+    <CheckBox Content="Validate orphaned daily logs when merging logs" IsChecked="{Binding ValidateOrphanedLogs}"
+              ToolTip.Tip="A daily log that is already fully inside a weekly or monthly log is moved to the Archive folder instead of being kept or copied back from the sync folder." />
+
+    <TextBlock Text="These settings are for the installation selected in the status bar. Pick another installation there to change its settings."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
 
     <ContentControl Content="{Binding SelectedEnvironment}">
       <ContentControl.ContentTemplate>
         <DataTemplate x:DataType="vm:EnvironmentEditor">
           <StackPanel Spacing="10">
 
-            <CheckBox Content="Make this environment the default" IsChecked="{Binding IsDefault}"
+            <TextBlock FontSize="14" FontWeight="SemiBold">
+              <Run Text="Installation: " /><Run Text="{Binding Name}" />
+            </TextBlock>
+
+            <CheckBox Content="Make this installation the default" IsChecked="{Binding IsDefault}"
                       IsEnabled="{Binding CanChangeDefault}" />
-            <CheckBox Content="Use default (inherit the default environment's settings)" IsChecked="{Binding UseDefault}"
+            <CheckBox Content="Use default (inherit the default installation's settings)" IsChecked="{Binding UseDefault}"
                       IsEnabled="{Binding CanChangeDefault}" />
 
             <StackPanel Orientation="Horizontal" Spacing="10" ToolTip.Tip="The folder under settings used by this installation (chat, client and key bind files)">
@@ -34,9 +33,9 @@
 
             <!-- Everything below is greyed out while inheriting the default's settings -->
             <StackPanel Spacing="10" IsEnabled="{Binding IsEditable}">
-              <Border BorderBrush="#3F3F46" BorderThickness="0,1,0,0" Margin="0,4,0,0" />
+              <Border BorderBrush="{DynamicResource ChBorder}" BorderThickness="0,1,0,0" Margin="0,4,0,0" />
 
-              <TextBlock Text="Backup folder" FontWeight="SemiBold" />
+              <TextBlock Text="Sync folder" FontWeight="SemiBold" />
               <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
                 <TextBox Text="{Binding BackupFolder}" />
                 <Button Grid.Column="1" Content="Browse..." Click="OnBrowse" />

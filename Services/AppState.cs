@@ -25,14 +25,8 @@ public sealed partial class AppState : ObservableObject
 
     public AppState()
     {
-        // Saved list from installations.ini; mock entries until the user saves their own.
-        ApplyInstallations(InstallationStore.Load() ?? new List<Installation>
-        {
-            new("Homecoming - Live", @"C:\Games\Homecoming"),
-            new("Homecoming - Beta", @"C:\Games\HomecomingBeta"),
-            new("Rebirth", @"C:\Games\Rebirth"),
-            new("Local Test Server", @"D:\Dev\TestServer"),
-        });
+        // Saved list from CityHelper.ini; empty until first-run setup or Options adds some.
+        ApplyInstallations(InstallationStore.Load() ?? new List<Installation>());
     }
 
     partial void OnSelectedInstallationChanged(Installation? value) => LoadAccounts(value);

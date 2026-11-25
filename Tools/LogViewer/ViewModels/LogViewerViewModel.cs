@@ -55,7 +55,7 @@ public sealed record LogFileItem(string Name, string Path)
 /// Shows one chat log of the selected installation / account with the channel and character filters
 /// and the date / time / channel / character toggles.
 /// </summary>
-public sealed partial class LogViewerViewModel : ViewModelBase
+public sealed partial class LogViewerViewModel : ViewModelBase, IStatusSource
 {
     private readonly AppState _state;
     private LogViewerSettings _settings = LogViewerSettings.Load();
@@ -93,7 +93,18 @@ public sealed partial class LogViewerViewModel : ViewModelBase
     [ObservableProperty] private DisplayOptions _display = null!;
     [ObservableProperty] private ScrollBarVisibility _horizontalScroll = ScrollBarVisibility.Disabled;
     [ObservableProperty] private string _folderText = "";
-    [ObservableProperty] private string _statusText = "";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StatusBarText))]
+    private string _statusText = "";
+
+    /// <summary>"12 results" / "Result 3 of 12" for the text in the find box; empty when there is no text.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StatusBarText))]
+    private string _resultsText = "";
+
+    /// <summary>Shown at the right of the main status bar: the results first, then the line counts.</summary>
+    public string StatusBarText => ResultsText.Length == 0 ? StatusText : ResultsText + "   |   " + StatusText;
 
     [ObservableProperty] private bool _showDates;
     [ObservableProperty] private bool _showTimes = true;
@@ -103,13 +114,81 @@ public sealed partial class LogViewerViewModel : ViewModelBase
     /// <summary>Marks in red the lines Log Manager's Cleanup Logfile would remove (its channel options decide).</summary>
     [ObservableProperty] private bool _showCleanup;
 
-    /// <summary>Text to highlight in the lines; several words or phrases can be separated by commas. Not saved.</summary>
+    public const string ModeHighlight = "Highlight";
+    public const string ModeSearch = "Search";
+    public IReadOnlyList<string> FindModes { get; } = new[] { ModeHighlight, ModeSearch };
+
+    /// <summary>Highlight marks the text in the lines; Search also steps through the lines that contain it.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NextResultCommand), nameof(PreviousResultCommand))]
+    private string _findMode = ModeHighlight;
+
+    /// <summary>Text to highlight or search for; several words or phrases can be separated by commas. Not saved.</summary>
     [ObservableProperty] private string _highlightText = "";
+
+    /// <summary>Raised to scroll to (and select) the current search result.</summary>
+    public event Action<LogLine>? ResultRequested;
+
+    private List<LogLine> _results = new();
+    private int _currentResult = -1;
 
     partial void OnHighlightTextChanged(string value)
     {
         if (!_loading && Display != null)
             RefreshDisplay();
+    }
+
+    partial void OnFindModeChanged(string value)
+    {
+        _currentResult = -1;
+        UpdateResults();
+    }
+
+    private bool SearchActive => FindMode == ModeSearch && _results.Count > 0;
+
+    /// <summary>The lines of the current view that contain the find text (the text as it is drawn: character and message).</summary>
+    private void UpdateResults()
+    {
+        var pattern = BuildHighlight();
+        _results = pattern is null
+            ? new List<LogLine>()
+            : VisibleLines.Where(l => pattern.IsMatch(SearchableText(l))).ToList();
+        if (_currentResult >= _results.Count)
+            _currentResult = -1;
+        UpdateResultsText();
+        NextResultCommand.NotifyCanExecuteChanged();
+        PreviousResultCommand.NotifyCanExecuteChanged();
+    }
+
+    private string SearchableText(LogLine line) =>
+        (line.ShowCharacterPrefix && line.Character.Length > 0 ? line.CharacterDisplay + ": " : "")
+        + LogLineFormatter.MessageText(line, Display?.ColorCodes ?? ColorCodeMode.Hide);
+
+    private void UpdateResultsText()
+    {
+        if (HighlightText.Trim().Length == 0)
+            ResultsText = "";
+        else if (_currentResult >= 0)
+            ResultsText = $"Result {_currentResult + 1:N0} of {_results.Count:N0}";
+        else
+            ResultsText = _results.Count == 1 ? "1 result" : $"{_results.Count:N0} results";
+    }
+
+    [RelayCommand(CanExecute = nameof(SearchActive))]
+    private void NextResult() => StepResult(+1);
+
+    [RelayCommand(CanExecute = nameof(SearchActive))]
+    private void PreviousResult() => StepResult(-1);
+
+    private void StepResult(int direction)
+    {
+        if (_results.Count == 0)
+            return;
+        _currentResult = _currentResult < 0
+            ? (direction > 0 ? 0 : _results.Count - 1)
+            : (_currentResult + direction + _results.Count) % _results.Count;
+        UpdateResultsText();
+        ResultRequested?.Invoke(_results[_currentResult]);
     }
 
     /// <summary>Case-insensitive match for any of the comma-separated terms; null when the box is empty.</summary>
@@ -152,6 +231,7 @@ public sealed partial class LogViewerViewModel : ViewModelBase
         Display = BuildDisplay();
         HorizontalScroll = _settings.WordWrap ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Auto;
         VisibleLines = VisibleLines.ToArray();      // new list instance: the list re-realizes its rows
+        UpdateResults();
     }
 
     private void SaveSettings()
@@ -159,14 +239,24 @@ public sealed partial class LogViewerViewModel : ViewModelBase
         try { _settings.Save(); }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            StatusText = "Could not write logviewer.ini: " + ex.Message;
+            StatusText = "Could not write CityHelper.ini: " + ex.Message;
         }
     }
 
     // ---- folder and file list ----
 
-    private void LoadFolder()
+    // The channel and character filters that were switched off before a refresh, restored once the file is read again
+    private (HashSet<string> Channels, HashSet<string> Characters)? _keepFilters;
+
+    private (HashSet<string> Channels, HashSet<string> Characters) CaptureUncheckedFilters() => (
+        ChannelItems.Where(c => !c.IsChecked).Select(c => c.Name).ToHashSet(StringComparer.OrdinalIgnoreCase),
+        CharacterItems.Where(c => !c.IsChecked).Select(c => c.Name).ToHashSet(StringComparer.OrdinalIgnoreCase));
+
+    /// <summary>Reads the folder again. With <paramref name="keepPath"/> that file stays selected if it still exists.</summary>
+    private void LoadFolder(string? keepPath = null)
     {
+        if (keepPath is null)
+            _keepFilters = null;
         Files.Clear();
         SelectedFile = null;
         ClearLog();
@@ -190,7 +280,8 @@ public sealed partial class LogViewerViewModel : ViewModelBase
         {
             foreach (var f in new DirectoryInfo(dir).EnumerateFiles("*.txt", SearchOption.TopDirectoryOnly)
                          .Where(f => f.Extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
-                         .OrderByDescending(f => f.LastWriteTimeUtc))
+                         .OrderByDescending(f => LogOperations.DateOf(f.FullName))     // the date in the name, newest first
+                         .ThenByDescending(f => f.Name, StringComparer.OrdinalIgnoreCase))
                 Files.Add(new LogFileItem(f.Name, f.FullName));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -200,7 +291,11 @@ public sealed partial class LogViewerViewModel : ViewModelBase
         }
 
         StatusText = Files.Count == 0 ? "No log files found." : "";
-        SelectedFile = Files.FirstOrDefault();          // newest first
+        var target = (keepPath is null ? null : Files.FirstOrDefault(f => f.Path.Equals(keepPath, StringComparison.OrdinalIgnoreCase)))
+                     ?? Files.FirstOrDefault();         // newest first
+        if (target is null || !target.Path.Equals(keepPath, StringComparison.OrdinalIgnoreCase))
+            _keepFilters = null;                        // a different file: its filters start fresh
+        SelectedFile = target;
     }
 
     partial void OnSelectedFileChanged(LogFileItem? value) => _ = LoadFileAsync(value);
@@ -218,6 +313,8 @@ public sealed partial class LogViewerViewModel : ViewModelBase
     private async Task LoadFileAsync(LogFileItem? file)
     {
         int version = ++_version;
+        var keep = _keepFilters;
+        _keepFilters = null;
         ClearLog();
         if (file is null)
             return;
@@ -245,9 +342,9 @@ public sealed partial class LogViewerViewModel : ViewModelBase
         _log = parsed;
         _suspendFilter = true;
         foreach (var (name, count) in parsed.ChannelCounts)
-            ChannelItems.Add(new FilterItemViewModel(name, count, ApplyFilters));
+            ChannelItems.Add(new FilterItemViewModel(name, count, ApplyFilters) { IsChecked = keep is null || !keep.Value.Channels.Contains(name) });
         foreach (var (name, count) in parsed.CharacterCounts)
-            CharacterItems.Add(new FilterItemViewModel(name, count, ApplyFilters));
+            CharacterItems.Add(new FilterItemViewModel(name, count, ApplyFilters) { IsChecked = keep is null || !keep.Value.Characters.Contains(name) });
         _suspendFilter = false;
 
         ApplyFilters();
@@ -264,6 +361,8 @@ public sealed partial class LogViewerViewModel : ViewModelBase
         var characters = CharacterItems.Where(c => c.IsChecked).Select(c => c.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         VisibleLines = _log.Lines.Where(l => channels.Contains(l.ChannelKey) && characters.Contains(l.CharacterKey)).ToArray();
+        _currentResult = -1;
+        UpdateResults();
         UpdateStatus();
     }
 
@@ -294,13 +393,112 @@ public sealed partial class LogViewerViewModel : ViewModelBase
     [RelayCommand] private void CheckAllCharacters() => SetAll(CharacterItems, true);
     [RelayCommand] private void UncheckAllCharacters() => SetAll(CharacterItems, false);
 
+    /// <summary>Rewrites "[05:53]"-style channels in the displayed log as "[System]" (needs the Log Manager option).</summary>
+    [RelayCommand]
+    private async Task FixSystemAsync()
+    {
+        var file = SelectedFile;
+        if (file is null)
+        {
+            StatusText = "Pick a log file first.";
+            return;
+        }
+        var settings = LogManagerSettings.Load();
+
+        await RunOnFileAsync(file, "Fixing...",
+            (dir, path) => LogOperations.FixTimestampedSystemMessages(dir, path, settings.KeepCopies, settings.CopiesFolder));
+    }
+
+    /// <summary>Adds [Combat] / [System] to the displayed log's lines that have no channel but are known messages.</summary>
+    [RelayCommand]
+    private async Task InsertChannelsAsync()
+    {
+        if (SelectedFile is not { } file)
+        {
+            StatusText = "Pick a log file first.";
+            return;
+        }
+        var settings = LogManagerSettings.Load();
+        await RunOnFileAsync(file, "Adding channels...",
+            (dir, path) => LogOperations.InsertChannels(dir, path, settings.KeepCopies, settings.CopiesFolder));
+    }
+
+    /// <summary>Removes the entries of the channels left unchecked in Options > Log Manager from the displayed log.</summary>
+    [RelayCommand]
+    private async Task CleanupLogfileAsync()
+    {
+        if (SelectedFile is not { } file)
+        {
+            StatusText = "Pick a log file first.";
+            return;
+        }
+        var settings = LogManagerSettings.Load();
+
+        // Safety: removing a lot of a log needs a confirmation (more than 20% of its lines or 5000 lines, whichever is fewer)
+        StatusText = "Checking...";
+        (int Removed, int Total) preview;
+        try
+        {
+            preview = await Task.Run(() => LogOperations.PreviewCleanup(file.Path, settings.IncludedChannels));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            StatusText = "Could not read the file: " + ex.Message;
+            return;
+        }
+        if (preview.Removed == 0)
+        {
+            UpdateStatus();
+            StatusText = $"{file.Name}: nothing to remove   |   " + StatusText;
+            return;
+        }
+
+        double limit = Math.Min(preview.Total * 0.2, 5000);
+        if (preview.Removed > limit)
+        {
+            double percent = preview.Total == 0 ? 0 : 100.0 * preview.Removed / preview.Total;
+            var message = $"Cleanup would remove {preview.Removed:N0} of {preview.Total:N0} lines ({percent:0}%) from {file.Name}.\n\n"
+                        + (settings.KeepCopies ? "A copy is kept first.\n\n" : "No copy is kept (see Options > Log Manager).\n\n")
+                        + "Continue?";
+            if (Confirm is null || !await Confirm(message))
+            {
+                UpdateStatus();
+                StatusText = "Cleanup cancelled.   |   " + StatusText;
+                return;
+            }
+        }
+
+        await RunOnFileAsync(file, "Cleaning up...",
+            (dir, path) => LogOperations.Cleanup(dir, new[] { path }, settings.IncludedChannels, settings.KeepCopies,
+                                                  settings.CopiesFolder));
+    }
+
+    /// <summary>Asks the person to confirm (Yes / No); set by the view. Without it a confirmation counts as "No".</summary>
+    public Func<string, Task<bool>>? Confirm { get; set; }
+
+    /// <summary>Runs a rewrite of the displayed file off the UI thread, then shows the rewritten file and what was done.</summary>
+    private async Task RunOnFileAsync(LogFileItem file, string busyText, Func<string, string, LogOperationResult> operation)
+    {
+        var dir = Path.GetDirectoryName(file.Path)!;
+        StatusText = busyText;
+        var result = await Task.Run(() => operation(dir, file.Path));
+        await LoadFileAsync(file);                      // show the rewritten file
+        var parts = new List<string>(result.Messages);
+        if (result.Errors.Count > 0)
+            parts.Add("Errors: " + string.Join("; ", result.Errors));
+        StatusText = string.Join("   |   ", parts) + "   |   " + StatusText;
+    }
+
+    /// <summary>
+    /// Reads the folder and the open log file from disk again: the same file stays open, the channel and character
+    /// filters stay as they were, and the find box's search runs again on the new content (F5).
+    /// </summary>
     [RelayCommand]
     private void Refresh()
     {
         var current = SelectedFile?.Path;
-        LoadFolder();
-        if (current != null && Files.FirstOrDefault(f => f.Path.Equals(current, StringComparison.OrdinalIgnoreCase)) is { } same)
-            SelectedFile = same;                        // stay on the file that was open
+        _keepFilters = current is null ? null : CaptureUncheckedFilters();
+        LoadFolder(current);
     }
 
     /// <summary>Called after the Options window saved: picks up what was written.</summary>

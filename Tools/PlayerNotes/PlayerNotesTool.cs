@@ -21,12 +21,4 @@ public sealed class PlayerNotesTool : ITool
 
     public ICommand? SaveCommand => _vm.Value.SaveCommand;
 
-    public IReadOnlyList<RibbonGroup> RibbonGroups => new[]
-    {
-        new RibbonGroup("Player Notes", new[]
-        {
-            new RibbonCommand("Add Player", _vm.Value.AddRowCommand, "Add a new player at the top of the list"),
-            new RibbonCommand("Reload from disk", _vm.Value.ReloadCommand, "Discard unsaved changes and read the file again"),
-        }),
-    };
 }

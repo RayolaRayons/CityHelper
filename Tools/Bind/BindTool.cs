@@ -21,22 +21,4 @@ public sealed class BindTool : ITool
 
     public ICommand? SaveCommand => _vm.Value.SaveCommand;
 
-    /// <summary>Creating a file belongs with the other file commands (like New / Open in PopMenu Hero).</summary>
-    public IReadOnlyList<RibbonGroup> FileGroups => new[]
-    {
-        new RibbonGroup("Binds", new[]
-        {
-            new RibbonCommand("New Binds File", _vm.Value.NewFileCommand,
-                "Create a new file in the Binds folder (available when the Binds folder section is selected)"),
-        }),
-    };
-
-    public IReadOnlyList<RibbonGroup> RibbonGroups => new[]
-    {
-        new RibbonGroup("Bind", new[]
-        {
-            new RibbonCommand("Add Bind", _vm.Value.AddRowCommand, "Add a new line to the list"),
-            new RibbonCommand("Reload from disk", _vm.Value.ReloadCommand, "Discard unsaved changes and read the file again"),
-        }),
-    };
 }

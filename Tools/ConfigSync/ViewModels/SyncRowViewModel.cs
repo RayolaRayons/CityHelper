@@ -33,6 +33,9 @@ public sealed partial class SyncRowViewModel : ViewModelBase
 
     /// <summary>Log files are merged (two-way, by timestamp) instead of copied one way.</summary>
     public bool IsMerge { get; init; }
+
+    /// <summary>Config Sync's "validate orphaned logs" option, for the logs merge.</summary>
+    public bool ValidateOrphans { get; init; }
     private bool _mergeDiffers;
 
     public IReadOnlyList<string> LocalPaths { get; }

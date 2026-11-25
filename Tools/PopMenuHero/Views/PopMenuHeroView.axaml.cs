@@ -11,6 +11,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
+using CityHelper.Services.MacroImages;
 using CityHelper.Tools.PopMenuHero.Services;
 using CityHelper.Tools.PopMenuHero.ViewModels;
 
@@ -44,6 +45,18 @@ public partial class PopMenuHeroView : UserControl
     }
 
     private PopMenuHeroViewModel? Vm => DataContext as PopMenuHeroViewModel;
+
+    /// <summary>Icon field: pick a macro image and put its texture name in the field.</summary>
+    private async void OnLookupIcon(object? sender, RoutedEventArgs e)
+    {
+        if (TopLevel.GetTopLevel(this) is not Window owner || (sender as Control)?.DataContext is not LockedOptionNodeViewModel node)
+            return;
+        if (!await MacroImageUi.EnsureAsync(owner))
+            return;
+        var name = await new CityHelper.Views.MacroImageLookupWindow().ShowDialog<string?>(owner);
+        if (!string.IsNullOrEmpty(name))
+            node.Icon = name;
+    }
 
     private async void OnAttached(object? sender, VisualTreeAttachmentEventArgs e)
     {

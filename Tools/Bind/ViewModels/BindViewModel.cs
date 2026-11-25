@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -76,7 +77,11 @@ public sealed partial class BindViewModel : ViewModelBase
 
     public BindSection[] Sections { get; }
     public ObservableCollection<string> Files { get; } = new();
+    /// <summary>What the grid shows: all the rows, in the order chosen by the column headers (file order until one is clicked).</summary>
     public ObservableCollection<BindRowViewModel> Rows { get; } = new();
+
+    // The lines in file order. Saving writes these, so sorting the grid never reorders the file.
+    private readonly List<BindRowViewModel> _all = new();
 
     /// <summary>Asks for the name of a new binds file; null if cancelled. Provided by the view.</summary>
     public Func<Task<string?>>? PromptFileName { get; set; }
@@ -176,6 +181,7 @@ public sealed partial class BindViewModel : ViewModelBase
     private void LoadRows()
     {
         Rows.Clear();
+        _all.Clear();
         IsDirty = false;
         CanEdit = _path != null;
         _quoteNew = SelectedSection.Kind == BindSectionKind.Keybinds;     // until the file shows its own style
@@ -201,9 +207,10 @@ public sealed partial class BindViewModel : ViewModelBase
         try
         {
             foreach (var e in BindFile.Load(_path))
-                Rows.Add(NewRow(e.Key, e.Command));
-            if (Rows.Count > 0)
-                _quoteNew = Rows.Count(r => r.Quoted) * 2 > Rows.Count;      // new lines follow the style of the file
+                _all.Add(NewRow(e.Key, e.Command));
+            if (_all.Count > 0)
+                _quoteNew = _all.Count(r => r.Quoted) * 2 > _all.Count;      // new lines follow the style of the file
+            ApplySort();
             StatusText = _path;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -217,19 +224,68 @@ public sealed partial class BindViewModel : ViewModelBase
     private BindRowViewModel NewRow(string key, string rawCommand)
     {
         var command = Unquote(rawCommand, out var quoted);
-        var row = new BindRowViewModel(key, command, () => IsDirty = true, r =>
-        {
-            Rows.Remove(r);
-            IsDirty = true;
-        }) { Quoted = quoted };
-        return row;
+        return new BindRowViewModel(key, command, () => IsDirty = true, RemoveRow) { Quoted = quoted };
     }
 
-    private BindRowViewModel NewBlankRow() => new("", "", () => IsDirty = true, r =>
+    private BindRowViewModel NewBlankRow() => new("", "", () => IsDirty = true, RemoveRow) { Quoted = _quoteNew };
+
+    private void RemoveRow(BindRowViewModel row)
     {
-        Rows.Remove(r);
+        _all.Remove(row);
+        Rows.Remove(row);
         IsDirty = true;
-    }) { Quoted = _quoteNew };
+    }
+
+    // --- Sorting (display only; the file keeps its own order) ---
+
+    private enum SortColumn { None, Key, Command }
+
+    private SortColumn _sortColumn = SortColumn.None;
+    private bool _sortDescending;
+
+    public string KeyHeader => "Key" + SortArrow(SortColumn.Key);
+    public string CommandHeader => "Command" + SortArrow(SortColumn.Command);
+
+    private string SortArrow(SortColumn column) => _sortColumn != column ? "" : _sortDescending ? "  ▼" : "  ▲";
+
+    [RelayCommand]
+    private void SortByKey() => SortBy(SortColumn.Key);
+
+    [RelayCommand]
+    private void SortByCommand() => SortBy(SortColumn.Command);
+
+    /// <summary>A second click on the same header reverses the order.</summary>
+    private void SortBy(SortColumn column)
+    {
+        if (_sortColumn == column)
+            _sortDescending = !_sortDescending;
+        else
+        {
+            _sortColumn = column;
+            _sortDescending = false;
+        }
+        OnPropertyChanged(nameof(KeyHeader));
+        OnPropertyChanged(nameof(CommandHeader));
+        ApplySort();
+    }
+
+    /// <summary>Rebuilds the grid from the file-order list in the chosen order (the same row objects, so edits are kept).</summary>
+    private void ApplySort()
+    {
+        IEnumerable<BindRowViewModel> ordered = _all;
+        if (_sortColumn != SortColumn.None)
+        {
+            Func<BindRowViewModel, string> key = _sortColumn == SortColumn.Key ? r => r.Key ?? "" : r => r.Command ?? "";
+            ordered = _sortDescending
+                ? _all.OrderByDescending(key, StringComparer.OrdinalIgnoreCase)
+                : _all.OrderBy(key, StringComparer.OrdinalIgnoreCase);
+        }
+
+        var list = ordered.ToList();
+        Rows.Clear();
+        foreach (var row in list)
+            Rows.Add(row);
+    }
 
     private static string Unquote(string text, out bool quoted)
     {
@@ -237,11 +293,17 @@ public sealed partial class BindViewModel : ViewModelBase
         return quoted ? text[1..^1] : text;
     }
 
+    /// <summary>Raised with the new blank line after Add Bind, so the view can scroll to it and focus it.</summary>
+    public event Action<BindRowViewModel>? RowAdded;
+
     [RelayCommand(CanExecute = nameof(CanEdit))]
     private void AddRow()
     {
-        Rows.Add(NewBlankRow());
+        var row = NewBlankRow();
+        _all.Add(row);
+        Rows.Add(row);              // at the bottom of the grid, whatever the sort, so Add Bind jumps to it
         IsDirty = true;
+        RowAdded?.Invoke(row);
     }
 
     [RelayCommand(CanExecute = nameof(IsFolderSection))]
@@ -296,8 +358,8 @@ public sealed partial class BindViewModel : ViewModelBase
         if (_path is null)
             return false;
 
-        var entries = new System.Collections.Generic.List<BindEntry>();
-        foreach (var row in Rows)
+        var entries = new List<BindEntry>();
+        foreach (var row in _all)
         {
             var key = string.Concat(row.Key.Where(c => !char.IsWhiteSpace(c)));
             var command = row.Command.Trim();

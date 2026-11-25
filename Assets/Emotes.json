@@ -1,0 +1,1828 @@
+[
+  {
+    "name": "Afraid",
+    "aliases": [
+      "Cower",
+      "Fear",
+      "Scared"
+    ],
+    "description": "Cower in fear, hold stance."
+  },
+  {
+    "name": "Akimbo",
+    "aliases": [
+      "Wings"
+    ],
+    "description": "Stands with fists on hips looking forward, hold stance."
+  },
+  {
+    "name": "Alakazam",
+    "aliases": [],
+    "description": "Thrusts out one arm like you are performing a magic trick."
+  },
+  {
+    "name": "AlakazamReact",
+    "aliases": [],
+    "description": "Flash of light and smoke and a random object is left where your character was. After a few seconds, the character reappears, looks around and shrugs. Before issue 15, object was always a pumpkin."
+  },
+  {
+    "name": "Angry",
+    "aliases": [],
+    "description": "Fists on hips and slouches forward, as if glaring or grumbling, hold stance."
+  },
+  {
+    "name": "ArachnosMug",
+    "aliases": [],
+    "description": "Drinks out of an Arachnos-branded coffee mug."
+  },
+  {
+    "name": "AssumePositionWall",
+    "aliases": [],
+    "description": "Turns around and spreads legs as if getting frisked, hold stance."
+  },
+  {
+    "name": "AtEase",
+    "aliases": [],
+    "description": "Stands in the \u0027at ease\u0027 military position (legs spread out slightly, hands behind back) stance, hold stance."
+  },
+  {
+    "name": "Attack",
+    "aliases": [],
+    "description": "Gives a charge! type point, fists on hips stance."
+  },
+  {
+    "name": "BatLookout",
+    "aliases": [],
+    "description": "Hold a bat and look around. Repeat to cycle through two variations, one standing still, one pivoting around in place."
+  },
+  {
+    "name": "BatSmash",
+    "aliases": [],
+    "description": "Hit someone or something with a bat, repeat."
+  },
+  {
+    "name": "BatSmashReact",
+    "aliases": [],
+    "description": "React as if getting hit with a bat, often used in duo with BatSmash"
+  },
+  {
+    "name": "BigWave",
+    "aliases": [
+      "OverHere"
+    ],
+    "description": "Waves over the head, fists on hips stance."
+  },
+  {
+    "name": "Binoculars",
+    "aliases": [],
+    "description": "Gaze through a large pair of binoculars, hold stance."
+  },
+  {
+    "name": "BlankFiller",
+    "aliases": [],
+    "description": "No effect. Neither starts nor stops an emote."
+  },
+  {
+    "name": "BoomBox",
+    "aliases": [
+      "BB",
+      "DropBoomBox"
+    ],
+    "description": "Summons forth a boombox (it just appears) and leans over to turn it on, stands up and does a sort of dance. (boombox plays music, several different short songs -- Track Listing)"
+  },
+  {
+    "name": "Bow",
+    "aliases": [
+      "Sorry"
+    ],
+    "description": "Chinese/Japanese style bow with palms together, returns to normal stance."
+  },
+  {
+    "name": "BowDown",
+    "aliases": [
+      "Down"
+    ],
+    "description": "Thrusts hands forward, then points down, as if ordering someone else to bow before you."
+  },
+  {
+    "name": "Burp",
+    "aliases": [],
+    "description": "A raunchy belch, wipes mouth with arm afterward, ape-like stance."
+  },
+  {
+    "name": "BuzzOff",
+    "aliases": [
+      "GoAway"
+    ],
+    "description": "Makes a go away gesture."
+  },
+  {
+    "name": "Camera",
+    "aliases": [],
+    "description": "Hold an old-fashioned camera, and periodically take a picture, repeats."
+  },
+  {
+    "name": "Cameraphone",
+    "aliases": [],
+    "description": "The smartphone as a camera. Not a selfie, forward facing."
+  },
+  {
+    "name": "CellPhone",
+    "aliases": [],
+    "description": "Talk on a early 2000s cellphone, LCD screen and physical numeric keypad, periodically nodding, shaking head, and gesturing with hand, repeats. See also Smartphone."
+  },
+  {
+    "name": "Cheer",
+    "aliases": [],
+    "description": "Randomly does one of 3 cheers, 1 fist raised, 2 fists raised or 2 fists lowered, repeats."
+  },
+  {
+    "name": "Chicken",
+    "aliases": [],
+    "description": "Character flaps his arms and impersonates a chicken, ends in the Akimbo stance."
+  },
+  {
+    "name": "Clap",
+    "aliases": [],
+    "description": "Claps hands several times, crossed arms stance."
+  },
+  {
+    "name": "Clipboard",
+    "aliases": [],
+    "description": "Write notes on a clipboard, repeats."
+  },
+  {
+    "name": "Coin",
+    "aliases": [
+      "CoinToss",
+      "FlipCoin"
+    ],
+    "description": "Flips a coin, randomly displays heads or tails, and hold stance. Coin image remains until stance broken."
+  },
+  {
+    "name": "Collapse",
+    "aliases": [],
+    "description": "appear dizzy, then fall backwards, fainting."
+  },
+  {
+    "name": "CrossArms",
+    "aliases": [],
+    "description": "Crosses arms, stance (sliiiiiightly different than most other crossed arm stances)."
+  },
+  {
+    "name": "Crouch",
+    "aliases": [],
+    "description": "Squats down into a cat-like ready-to-pounce position, holds stance."
+  },
+  {
+    "name": "Dance",
+    "aliases": [],
+    "description": "Randomly performs a dance."
+  },
+  {
+    "name": "Dance1",
+    "aliases": [],
+    "description": "Dances with elbows by hips."
+  },
+  {
+    "name": "Dance2",
+    "aliases": [],
+    "description": "Dances with fists raised."
+  },
+  {
+    "name": "Dance3",
+    "aliases": [],
+    "description": "Swaying hands by hips, aka \u0027Really Bad\u0027 dancing."
+  },
+  {
+    "name": "Dance4",
+    "aliases": [],
+    "description": "Swaying hands up in the air, like in a breeze."
+  },
+  {
+    "name": "Dance5",
+    "aliases": [],
+    "description": "As Dance4, but jumping as well."
+  },
+  {
+    "name": "Dance6",
+    "aliases": [],
+    "description": "The monkey."
+  },
+  {
+    "name": "DDCoffee",
+    "aliases": [
+      "Coffee"
+    ],
+    "description": "Character drinks coffee out of a Drenched Donuts cup with a lid, looped."
+  },
+  {
+    "name": "DDCoffee2",
+    "aliases": [
+      "Coffee2"
+    ],
+    "description": "Character drinks coffee out of a Drenched Donuts cup without a lid, looped."
+  },
+  {
+    "name": "Despair",
+    "aliases": [],
+    "description": "Falls to knees, head tilted forward, hands resting limply on thighs."
+  },
+  {
+    "name": "Dice",
+    "aliases": [
+      "RollDice"
+    ],
+    "description": "Picks up, shakes and rolls a die, randomly displays the results (1-6), default stance. Die image quickly fades, so make a quick note of what the roll was!"
+  },
+  {
+    "name": "Dig",
+    "aliases": [
+      "DigHole",
+      "Shovel"
+    ],
+    "description": "Digs into the ground using a rusty shovel. Throws dirt behind."
+  },
+  {
+    "name": "Disagree",
+    "aliases": [],
+    "description": "Shakes head, crosses hand in front, then offers an alternative, crossed arms stance."
+  },
+  {
+    "name": "Doublefacepalm",
+    "aliases": [],
+    "description": "Slaps both hands on face, shakes head in disbelief."
+  },
+  {
+    "name": "Donut1",
+    "aliases": [],
+    "description": "Character eats a strawberry donut, looped."
+  },
+  {
+    "name": "Donut2",
+    "aliases": [],
+    "description": "Character eats a chocolate donut, looped."
+  },
+  {
+    "name": "Donut3",
+    "aliases": [],
+    "description": "Character eats a donut with rainbow sprinkles, looped."
+  },
+  {
+    "name": "Donut4",
+    "aliases": [],
+    "description": "Character eats a plain donut, looped."
+  },
+  {
+    "name": "Donut5",
+    "aliases": [],
+    "description": "Character eats a white donut with blue sprinkles, looped."
+  },
+  {
+    "name": "Drat",
+    "aliases": [],
+    "description": "Raises fists up, then down, stomping at the same time, same ending stance as Frustrated."
+  },
+  {
+    "name": "Drink",
+    "aliases": [],
+    "description": "Character holds a cup and drinks from it."
+  },
+  {
+    "name": "Drum",
+    "aliases": [],
+    "description": "Beats a large wooden drum."
+  },
+  {
+    "name": "DrumDance",
+    "aliases": [],
+    "description": "The Tuatha Drum dance."
+  },
+  {
+    "name": "DrumLow",
+    "aliases": [],
+    "description": "Kneels and plays a small wooden drum on the ground."
+  },
+  {
+    "name": "DustOff",
+    "aliases": [],
+    "description": "Character dusts off his hands."
+  },
+  {
+    "name": "EatDonut",
+    "aliases": [
+      "Donut"
+    ],
+    "description": "Character eats a donut; note that this and EatFood have potential to look odd when performed on some model shapes such as the Dwarf Star form of Kheldians."
+  },
+  {
+    "name": "EatFood",
+    "aliases": [
+      "Eat",
+      "Food"
+    ],
+    "description": "Character eats a bit of random food, usually a hot dog, hamburger or sandwich; Dwarf form of Kheldians and other \u0022monster\u0022 skeletons will instead gnaw on a large bone."
+  },
+  {
+    "name": "Explain",
+    "aliases": [],
+    "description": "Hold arms out in a \u0022wait a minute\u0022 gesture, motion alternatives, then shrug."
+  },
+  {
+    "name": "EvilLaugh",
+    "aliases": [
+      "ELaugh",
+      "Muahahaha",
+      "VillainLaugh",
+      "VillainousLaugh"
+    ],
+    "description": "Extremely melodramatic, overacted evil laugh."
+  },
+  {
+    "name": "FancyBow",
+    "aliases": [
+      "ElegantBow"
+    ],
+    "description": "A much more elegant, ball-room style bow, falls into neutral forward facing stance."
+  },
+  {
+    "name": "Fishing",
+    "aliases": [],
+    "description": "Hold out a fishing rod and reel, hold stance."
+  },
+  {
+    "name": "Flashlight",
+    "aliases": [],
+    "description": "Look around with a flashlight out in one of two stances, either the FlashlightUp stance or the FlashlightDown stance. Note that the light is only on at night."
+  },
+  {
+    "name": "FlashlightDown",
+    "aliases": [],
+    "description": "Look around with a flashlight aimed below head level. Note that the light is only on at night."
+  },
+  {
+    "name": "FlashlightUp",
+    "aliases": [],
+    "description": "Look around with a flashlight aimed above head level. Note that the light is only on at night."
+  },
+  {
+    "name": "Flex1",
+    "aliases": [
+      "FlexA"
+    ],
+    "description": "Fists raised, flexing arms stance, hold stance. (This is called a \u0022double biceps\u0022 pose.)"
+  },
+  {
+    "name": "Flex2",
+    "aliases": [
+      "Flex",
+      "FlexB"
+    ],
+    "description": "A side-stance flexing arms, hold stance. (This is a sideways variation on the \u0022most muscular\u0022 pose.)"
+  },
+  {
+    "name": "Flex3",
+    "aliases": [
+      "FlexC"
+    ],
+    "description": "Another side-stance, flexing arms, hold stance. (This is an open variation on the \u0022side chest\u0022 pose.)"
+  },
+  {
+    "name": "Flip",
+    "aliases": [
+      "BackFlip"
+    ],
+    "description": "Character performs a backflip."
+  },
+  {
+    "name": "FlippingCoin",
+    "aliases": [],
+    "description": "Flip a coin into the air and catch it without checking whether it is heads or tails, repeats."
+  },
+  {
+    "name": "FloatBooks",
+    "aliases": [],
+    "description": "Places three magical tomes floating in mid-air, and character glances among them and holds stance."
+  },
+  {
+    "name": "Flypose1",
+    "aliases": [],
+    "description": "During flight, changes flight pose to arms fully outstretched in front."
+  },
+  {
+    "name": "Flypose2",
+    "aliases": [],
+    "description": "During flight, changes flight pose to one arm in front, one arm pulled back to side, and one knee pulled upward; Superman pose"
+  },
+  {
+    "name": "Flypose3",
+    "aliases": [],
+    "description": "During flight, changes flight pose to arms stretched forward and to the side in a Y-formation."
+  },
+  {
+    "name": "Flypose4",
+    "aliases": [],
+    "description": "During flight, changes flight pose to head up and arms pulled back to side, in an \u0022I dare you to shoot at me\u0022 pose."
+  },
+  {
+    "name": "Frustrated",
+    "aliases": [],
+    "description": "Raises both fists and leans backwards, shaking fists and head, leads into a quick-breathing angry-looking stance."
+  },
+  {
+    "name": "GetSome",
+    "aliases": [
+      "Kissit"
+    ],
+    "description": "Turns to the side and pats butt in defiance."
+  },
+  {
+    "name": "GhoulFlex",
+    "aliases": [],
+    "description": "Performs the Praetorian Ghouls\u0027 standing animation."
+  },
+  {
+    "name": "Grief",
+    "aliases": [],
+    "description": "Falls to knees, hands on forehead, looks up and gestures a sort of \u0022why me?\u0022 look with hands, goes into a sort of depressed slump while on knees, holds stance."
+  },
+  {
+    "name": "Hamburger",
+    "aliases": [],
+    "description": "Character takes out and eats a hamburger; Dwarf form of Kheldians and other \u0022monster\u0022 skeletons will instead gnaw on a large bone."
+  },
+  {
+    "name": "Hand",
+    "aliases": [
+      "TalkToHand"
+    ],
+    "description": "Hold hand out in a \u0022talk to the hand\u0022 gesture."
+  },
+  {
+    "name": "HandsUp",
+    "aliases": [
+      "Surrender"
+    ],
+    "description": "Two stances with hands up, one standing and one kneeling."
+  },
+  {
+    "name": "Hi",
+    "aliases": [
+      "Wave"
+    ],
+    "description": "Simple greeting wave, fists on hips stance."
+  },
+  {
+    "name": "Hmmm",
+    "aliases": [
+      "Plotting"
+    ],
+    "description": "Stare into the sky, rubbing chin, thinking."
+  },
+  {
+    "name": "HoldTorch",
+    "aliases": [],
+    "description": "Produce burning torch and hold it up."
+  },
+  {
+    "name": "Hotdog",
+    "aliases": [],
+    "description": "Character takes out and eats a Hot Dog; Dwarf form of Kheldians and other \u0022monster\u0022 skeletons will instead gnaw on a large bone."
+  },
+  {
+    "name": "Howl",
+    "aliases": [],
+    "description": "Lean back and howl at the moon."
+  },
+  {
+    "name": "Huh",
+    "aliases": [
+      "Shrug",
+      "What"
+    ],
+    "description": "Raises hands and cocks head in a classical \u0022What?\u0022/\u0022I don\u0027t know\u0022 look, neutral forward facing stance."
+  },
+  {
+    "name": "Idle1",
+    "aliases": [],
+    "description": "Stands still, body slightly angled and hands at sides, breathing, hold stance."
+  },
+  {
+    "name": "Idle2",
+    "aliases": [],
+    "description": "Stands still, facing forward and hands at sides, breathing."
+  },
+  {
+    "name": "InnerTube",
+    "aliases": [],
+    "description": "Character floats in a random inner tube and sips from a drink, looped. Only works while swimming."
+  },
+  {
+    "name": "InnerTube1",
+    "aliases": [],
+    "description": "Character floats in a strawberry donut inner tube and sips from a drink, looped. Only works while swimming."
+  },
+  {
+    "name": "InnerTube2",
+    "aliases": [],
+    "description": "Character floats in a chocolate donut inner tube and sips from a drink, looped. Only works while swimming."
+  },
+  {
+    "name": "InnerTube3",
+    "aliases": [],
+    "description": "Character floats in a neon green inner tube and sips from a drink, looped. Only works while swimming."
+  },
+  {
+    "name": "InnerTube4",
+    "aliases": [],
+    "description": "Character floats in a cow print inner tube and sips from a drink, looped. Only works while swimming."
+  },
+  {
+    "name": "InnerTube5",
+    "aliases": [],
+    "description": "Character floats in a naval academy inner tube and sips from a drink, looped. Only works while swimming."
+  },
+  {
+    "name": "InnerTube6",
+    "aliases": [],
+    "description": "Character floats in a lifeguard-style inner tube and sips from a drink, looped. Only works while swimming."
+  },
+  {
+    "name": "Invent",
+    "aliases": [],
+    "description": "Character fiddles with some kind of glowing Rubik\u0027s Cube-style device that hovers on its own, repeats."
+  },
+  {
+    "name": "Jackhammer",
+    "aliases": [],
+    "description": "Uses a jackhammer."
+  },
+  {
+    "name": "JellyDonut",
+    "aliases": [],
+    "description": "Character eats a jelly donut with strawberry filling, looped."
+  },
+  {
+    "name": "JellyDonut2",
+    "aliases": [
+      "LemonDonut"
+    ],
+    "description": "Character eats a jelly donut with lemon filling, looped."
+  },
+  {
+    "name": "JumboDog",
+    "aliases": [
+      "JumboHotDog"
+    ],
+    "description": "Pulls out and eats a large hot dog with mustard or ketchup."
+  },
+  {
+    "name": "JumpingJacks",
+    "aliases": [],
+    "description": "Does jumping jacks, repeats."
+  },
+  {
+    "name": "Kneel",
+    "aliases": [],
+    "description": "Quickly kneels on both knees with hands on thighs (looks insanely uncomfortable), holds stance."
+  },
+  {
+    "name": "Kneel2",
+    "aliases": [],
+    "description": "Takes a knee, identical to Rest."
+  },
+  {
+    "name": "Kneel3",
+    "aliases": [],
+    "description": "Takes a knee, similar to Rest, but head bowed, looking to the ground."
+  },
+  {
+    "name": "Kneel4",
+    "aliases": [],
+    "description": "Takes a knee, similar to Rest, but body and head upright, hands resting on one knee."
+  },
+  {
+    "name": "Kneel5",
+    "aliases": [],
+    "description": "Kneels on both knees, head bowed, hands on the ground."
+  },
+  {
+    "name": "Knuckles",
+    "aliases": [
+      "Crack",
+      "Knuckle"
+    ],
+    "description": "Cracks knuckles."
+  },
+  {
+    "name": "Laptop",
+    "aliases": [],
+    "description": "Summon a laptop and a stand for it, and start typing."
+  },
+  {
+    "name": "Laugh",
+    "aliases": [],
+    "description": "Fists on hips, tosses head back and laughs."
+  },
+  {
+    "name": "Laugh2",
+    "aliases": [
+      "BigLaugh",
+      "LaughToo"
+    ],
+    "description": "Another style of laugh."
+  },
+  {
+    "name": "Lecture",
+    "aliases": [],
+    "description": "Waves/shakes hands in different motions in a lengthy lecture, fists on hips stance."
+  },
+  {
+    "name": "Ledgesit",
+    "aliases": [],
+    "description": "Random Ledgesit"
+  },
+  {
+    "name": "Ledgesit1",
+    "aliases": [],
+    "description": "Hands on ledge"
+  },
+  {
+    "name": "Ledgesit2",
+    "aliases": [],
+    "description": "One leg up casual"
+  },
+  {
+    "name": "Ledgesit3",
+    "aliases": [],
+    "description": "Forearms on knees"
+  },
+  {
+    "name": "Ledgesit4",
+    "aliases": [],
+    "description": "Leaning back"
+  },
+  {
+    "name": "Liedown",
+    "aliases": [],
+    "description": "Lays down on the right side, in a semi-curled position."
+  },
+  {
+    "name": "ListenPoliceBand",
+    "aliases": [],
+    "description": "Character produces the police band scanner and opens its display. Heroes only. Villains can use ListenStolenPoliceBand, but it requires unlocking."
+  },
+  {
+    "name": "ListenStolenPoliceBand",
+    "aliases": [],
+    "description": "Listens in on the heroes\u0027 PPD police band radio. Unlocked by earning the Outlaw Badge (Villains only). Heroes can use ListenPoliceBand, without any unlock requirement."
+  },
+  {
+    "name": "Lookup",
+    "aliases": [],
+    "description": "Steps back slightly, hands held slightly out with palms down at waist level, looks up in wonder."
+  },
+  {
+    "name": "MartialArts",
+    "aliases": [
+      "Kata"
+    ],
+    "description": "Warm up/practice punches and blocks."
+  },
+  {
+    "name": "MilitarySalute",
+    "aliases": [],
+    "description": "Stands in the military-style heads-high hand on forehead salute stance."
+  },
+  {
+    "name": "Newspaper",
+    "aliases": [
+      "AFK"
+    ],
+    "description": "Materializes a newspaper (don\u0027t ask) and reads it."
+  },
+  {
+    "name": "No",
+    "aliases": [
+      "DontAttack"
+    ],
+    "description": "Shakes head and waves hands in front of character, crossed arms stance."
+  },
+  {
+    "name": "Nod",
+    "aliases": [],
+    "description": "Fists on hips, nod yes, hold stance."
+  },
+  {
+    "name": "None",
+    "aliases": [],
+    "description": "Cancels the current emote, if any, and resumes default standing animation cycle."
+  },
+  {
+    "name": "Noooo",
+    "aliases": [
+      "CurseYou"
+    ],
+    "description": "(that\u0027s 4 o\u0027s in noooo...) Shaking fist."
+  },
+  {
+    "name": "ObserveDice",
+    "aliases": [],
+    "description": "Character looks downward, hands on knees, periodically rubbing palms together."
+  },
+  {
+    "name": "Onigiri",
+    "aliases": [],
+    "description": "Character eats a rice ball."
+  },
+  {
+    "name": "Pamphlet",
+    "aliases": [],
+    "description": "Holds out pamphlets. The pamphlets say \u0022EXTRA / ~Paragon Times~ / Heroes Halt Havoc!\u0022"
+  },
+  {
+    "name": "Panhandle",
+    "aliases": [],
+    "description": "Sits and waves a tin cup around as if asking for change."
+  },
+  {
+    "name": "Paper",
+    "aliases": [],
+    "description": "Plays rock/paper/scissors, picking paper (displays all three symbols for about 6 seconds, then displays and holds your choice until stance is broken)."
+  },
+  {
+    "name": "ParagonMug",
+    "aliases": [],
+    "description": "Drinks out of a Paragon City-branded coffee mug."
+  },
+  {
+    "name": "Peerin",
+    "aliases": [],
+    "description": "Make \u0022hand binoculars\u0022 and look around, repeats."
+  },
+  {
+    "name": "PickLock",
+    "aliases": [],
+    "description": "\u0022Picks\u0022 a lock using a large hammer."
+  },
+  {
+    "name": "Plot",
+    "aliases": [
+      "Scheme"
+    ],
+    "description": "Rubs hands together while hunched over."
+  },
+  {
+    "name": "PocketDog",
+    "aliases": [
+      "PocketHotDog",
+      "JumboDeluxePocketDog"
+    ],
+    "description": "Pulls out and eats a hot dog with ketchup or mustard, discarding a disposable hot dog plate in the process. Despite the name, the pocket dog is slightly larger than the dog in e hotdog."
+  },
+  {
+    "name": "Point",
+    "aliases": [],
+    "description": "Extends left arm and points in direction character is facing, hold stance."
+  },
+  {
+    "name": "Praise",
+    "aliases": [],
+    "description": "Kneel prostrate and and repeatedly bow in adoration."
+  },
+  {
+    "name": "Protest",
+    "aliases": [],
+    "description": "Hold hold up one of several randomly selected mostly unreadable protest signs (see notes below)."
+  },
+  {
+    "name": "PumpkinMug",
+    "aliases": [],
+    "description": "Drinks out of a pumpkin-shaped coffee mug filled with sugary treats."
+  },
+  {
+    "name": "ReadBook",
+    "aliases": [],
+    "description": "Open a book in one hand, read while pointing at words with the other. (animation added for Issue 12)"
+  },
+  {
+    "name": "Research",
+    "aliases": [],
+    "description": "Pull out book and begin consulting it while making gestures in the air with other."
+  },
+  {
+    "name": "ResearchLow",
+    "aliases": [],
+    "description": "Same as Research, but kneeling on one knee."
+  },
+  {
+    "name": "Roar",
+    "aliases": [],
+    "description": "Claws air, roaring, ape-like stance."
+  },
+  {
+    "name": "Rock",
+    "aliases": [],
+    "description": "Plays rock/paper/scissors, picking rock (displays all three symbols for about 6 seconds, then displays and holds your choice until stance is broken)."
+  },
+  {
+    "name": "Salute",
+    "aliases": [],
+    "description": "A hand-on-forehead salute, fists on hips stance."
+  },
+  {
+    "name": "Sandwich",
+    "aliases": [],
+    "description": "Character takes out and eats a half sandwich; Dwarf form of Kheldians and other \u0022monster\u0022 skeletons will instead gnaw on a large bone."
+  },
+  {
+    "name": "Scissors",
+    "aliases": [],
+    "description": "Plays rock/paper/scissors, picking scissors (displays all three symbols for about 6 seconds, then displays and holds your choice until stance is broken)."
+  },
+  {
+    "name": "Score1",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 1, holds stance."
+  },
+  {
+    "name": "Score2",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 2, holds stance."
+  },
+  {
+    "name": "Score3",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 3, holds stance."
+  },
+  {
+    "name": "Score4",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 4, holds stance."
+  },
+  {
+    "name": "Score5",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 5, holds stance."
+  },
+  {
+    "name": "Score6",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 6, holds stance."
+  },
+  {
+    "name": "Score7",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 7, holds stance."
+  },
+  {
+    "name": "Score8",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 8, holds stance."
+  },
+  {
+    "name": "Score9",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 9, holds stance."
+  },
+  {
+    "name": "Score10",
+    "aliases": [],
+    "description": "Holds a black on white scorecard up, displaying a 10, holds stance."
+  },
+  {
+    "name": "Screen",
+    "aliases": [
+      "TouchScreen"
+    ],
+    "description": "Character observes and writes like on a monitor or chalkboard."
+  },
+  {
+    "name": "Shocked",
+    "aliases": [],
+    "description": "Steps back slightly, trembling hands held out with palms toward face, looks down at palms."
+  },
+  {
+    "name": "Shucks",
+    "aliases": [],
+    "description": "Swings fist and head dejectedly, neutral forward facing stance (not the default stance, same as huh/shrug)."
+  },
+  {
+    "name": "Sit",
+    "aliases": [],
+    "description": "Sits down, legs forward, with knees bent, elbows on knees, and slightly slumped over, stance."
+  },
+  {
+    "name": "SitBench1",
+    "aliases": [],
+    "description": "Sits leaning back with legs at almost straight angle."
+  },
+  {
+    "name": "SitBench2",
+    "aliases": [],
+    "description": "Sits with right leg crossed under left."
+  },
+  {
+    "name": "SitBench3",
+    "aliases": [],
+    "description": "Sprawls out with arms spread out, presumably on the back of the sofa or bench."
+  },
+  {
+    "name": "SitBench4",
+    "aliases": [],
+    "description": "Sits upright with legs slightly extended in front."
+  },
+  {
+    "name": "SitChair1",
+    "aliases": [],
+    "description": "Sits with hands on knees, legs slightly spread and squared."
+  },
+  {
+    "name": "SitChair2",
+    "aliases": [],
+    "description": "Sits with arms on legs, slightly hunched forward."
+  },
+  {
+    "name": "SitChair3",
+    "aliases": [],
+    "description": "Sits with arms on legs, ladylike."
+  },
+  {
+    "name": "SitExecutiveChair",
+    "aliases": [],
+    "description": "Sit with arms at side, as if on armrests, and leaning back."
+  },
+  {
+    "name": "SitStool",
+    "aliases": [],
+    "description": "Sit with one leg propped slightly higher than the other."
+  },
+  {
+    "name": "SitTable1",
+    "aliases": [],
+    "description": "Chin resting on back of hand."
+  },
+  {
+    "name": "SitTable2",
+    "aliases": [],
+    "description": "Sit with chin in hand."
+  },
+  {
+    "name": "Slap",
+    "aliases": [],
+    "description": "Slap someone or something."
+  },
+  {
+    "name": "SlapReact",
+    "aliases": [],
+    "description": "React to getting slapped, often used in duo with Slap (difficult to time just right to appear to actually get slapped)."
+  },
+  {
+    "name": "Slash",
+    "aliases": [
+      "SlashThroat"
+    ],
+    "description": "Slashing motion across throat."
+  },
+  {
+    "name": "Sleep",
+    "aliases": [],
+    "description": "Body goes limp while still standing. Zzz\u0027s appear above character\u0027s head."
+  },
+  {
+    "name": "Slrcamera",
+    "aliases": [],
+    "description": "Pulls out modern SLR camera and takes picture."
+  },
+  {
+    "name": "Smack",
+    "aliases": [],
+    "description": "Backhand slap."
+  },
+  {
+    "name": "Smartphone",
+    "aliases": [],
+    "description": "Pulls out post-2010 smartphone, touchscreen with virtual keyboard, periodically nodding, shaking head, and gesturing with hand, repeats. See also CellPhone."
+  },
+  {
+    "name": "Spraypaint",
+    "aliases": [],
+    "description": "Looks around, crouches, and begins spraying a can of paint. Periodically shakes can. No graffiti \u0027tag\u0027 will appear, however."
+  },
+  {
+    "name": "SpookyDonut",
+    "aliases": [
+      "HalloweenDonut"
+    ],
+    "description": "Character eats a donut with orange sprinkles, looped."
+  },
+  {
+    "name": "Stop",
+    "aliases": [
+      "RaiseHand"
+    ],
+    "description": "Raises your right hand above your head, hold stance."
+  },
+  {
+    "name": "Swoon",
+    "aliases": [],
+    "description": "Swoon, hand up to face, faint, falling forward with a thunk."
+  },
+  {
+    "name": "Talk",
+    "aliases": [],
+    "description": "Stand upright and slight bob head as if in a long diatribe. Periodically make hand gestures, repeats."
+  },
+  {
+    "name": "Tantrum",
+    "aliases": [],
+    "description": "Performs the Praetorian Ghouls\u0027 death throes animation."
+  },
+  {
+    "name": "Tarzan",
+    "aliases": [
+      "BeatChest"
+    ],
+    "description": "Beats chest and howls, angry-looking stance."
+  },
+  {
+    "name": "Taunt1",
+    "aliases": [
+      "TauntA"
+    ],
+    "description": "Taunts, beckoning with one hand, then slaps fist into palm, repeating stance."
+  },
+  {
+    "name": "Taunt2",
+    "aliases": [
+      "Taunt",
+      "TauntB"
+    ],
+    "description": "Taunts, beckoning with both hands, combat stance."
+  },
+  {
+    "name": "Teabag",
+    "aliases": [],
+    "description": "Character produces a cup of tea and bobs a teabag in it endlessly. Loops."
+  },
+  {
+    "name": "Text",
+    "aliases": [],
+    "description": "Pulls out smartphone, starts thumb typing."
+  },
+  {
+    "name": "Thanks",
+    "aliases": [
+      "ThankYou"
+    ],
+    "description": "Gestures with hand, neutral forward facing stance."
+  },
+  {
+    "name": "Thewave",
+    "aliases": [],
+    "description": "Does the wave (as seen in stadiums at sporting events), neutral facing forward stance."
+  },
+  {
+    "name": "ThreatHand",
+    "aliases": [
+      "SmackYou"
+    ],
+    "description": "Raise hand, as if threatening to backhand someone."
+  },
+  {
+    "name": "Type",
+    "aliases": [
+      "Typing"
+    ],
+    "description": "Types as if on a keyboard."
+  },
+  {
+    "name": "Typegauntlet",
+    "aliases": [],
+    "description": "Types on forearm as if on a number pad."
+  },
+  {
+    "name": "Vendor",
+    "aliases": [],
+    "description": "Character loops between calling out to the crowd, pointing to an object in front of the character (both hands), and pointing to an object to the left/behind (left hand). When flying, the character will not loop animations."
+  },
+  {
+    "name": "Victory",
+    "aliases": [],
+    "description": "Raises hands excitedly, and then again less excitedly, and then a third time almost non-chalantly, falls into neutral forward facing stance."
+  },
+  {
+    "name": "Waiting",
+    "aliases": [],
+    "description": "Cross arms on chest and tap foot. Periodically check wristwatch, and slice hand through air in an \u0022I can\u0027t believe he\u0027s still not here!\u0022 motion. Repeats."
+  },
+  {
+    "name": "WalkieTalkie",
+    "aliases": [],
+    "description": "Holds large walkie talkie (handheld radio) in front of face as if talking, scans around."
+  },
+  {
+    "name": "WallLean",
+    "aliases": [],
+    "description": "Casually lean against a wall in one of two postures (looks very odd when not standing next to wall)."
+  },
+  {
+    "name": "WarmHands",
+    "aliases": [],
+    "description": "Warms hands as if over a fire. Shivering and breathing on hands included in the animation loop."
+  },
+  {
+    "name": "Watermelon",
+    "aliases": [],
+    "description": "Character takes out and eats from a slice of watermelon (seeds and all); Dwarf form of Kheldians and other \u0022monster\u0022 skeletons will instead gnaw on a large bone."
+  },
+  {
+    "name": "WaveFist",
+    "aliases": [
+      "Rooting"
+    ],
+    "description": "Waves fist, hoots and then claps (its a cheer), crossed arms stance."
+  },
+  {
+    "name": "Welcome",
+    "aliases": [],
+    "description": "Open arms welcoming, fists on hips stance."
+  },
+  {
+    "name": "Whistle",
+    "aliases": [],
+    "description": "Whistles (sounds like a police whistle), ready-stance."
+  },
+  {
+    "name": "Winner",
+    "aliases": [
+      "Champion"
+    ],
+    "description": "Fist in fist cheer, right, and then left, neutral forward facing stance."
+  },
+  {
+    "name": "WinterDonut",
+    "aliases": [
+      "HolidayDonut",
+      "ChristmasDonut"
+    ],
+    "description": "Character eats a donut with red, blue and white sprinkles, looped."
+  },
+  {
+    "name": "WinterMug",
+    "aliases": [],
+    "description": "Drinks out of a winter-themed coffee mug filled with sugary treats."
+  },
+  {
+    "name": "Wounded",
+    "aliases": [],
+    "description": "Stand in one spot and wobble, as if extremely drunk or stunned."
+  },
+  {
+    "name": "YataYata",
+    "aliases": [
+      "Yata"
+    ],
+    "description": "Make \u0022blah blah blah\u0022 gesture with hand and look bored, as if to say, \u0022Is he still talking?\u0022"
+  },
+  {
+    "name": "YoureWelcome",
+    "aliases": [],
+    "description": "Bows head and gestures with hand, neutral forward facing stance."
+  },
+  {
+    "name": "Yes",
+    "aliases": [
+      "Thumbsup"
+    ],
+    "description": "Big (literally) thumbs up and an affirmative nod, fists on hips stance."
+  },
+  {
+    "name": "Yoga",
+    "aliases": [
+      "Lotus"
+    ],
+    "description": "Sits down cross legged with hands on knees/legs, holds stance."
+  },
+  {
+    "name": "BBAltitude",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBBeat",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBCatchMe",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBDance",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBDiscoFreak",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBDogWalk",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBElectroVibe",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBHeavyDude",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBInfoOverload",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBJumpy",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBKickIt",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBLooker",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBMeaty",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBMoveOn",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBNotorious",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBPeace",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBQuickie",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBRaver",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBShuffle",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBSpaz",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBTechnoid",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBVenus",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBWindItUp",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBWahWah",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "BBYellow",
+    "aliases": [],
+    "description": ""
+  },
+  {
+    "name": "Dice7",
+    "aliases": [],
+    "description": "Picks up, shakes and rolls a die, displays a 7, default stance. Unlocked by earning the Burkholder\u0027s Bane Badge (from the hero-side Ernesto Hess Task Force) or Deuces Wild Badge (a St. Martial exploration badge)."
+  },
+  {
+    "name": "MATablet",
+    "aliases": [],
+    "description": "Consults a clipboard-sized data pad. Unlocked by earning the Thrill Seeker Badge."
+  },
+  {
+    "name": "votmmug",
+    "aliases": [],
+    "description": "Drinks from a coffee mug emblazoned with the text \u0022Villain of the Month\u0022 and an image of Jack in Irons. Unlocked by earning the Villain of the Month Badge."
+  },
+  {
+    "name": "PowerDown",
+    "aliases": [
+      "RobotPowerDown"
+    ],
+    "description": "Mechanically slumps into a power-down state."
+  },
+  {
+    "name": "PowerUp",
+    "aliases": [
+      "RobotPowerUp"
+    ],
+    "description": "Mechanically straightens up into a powered-up state."
+  },
+  {
+    "name": "RobotDance",
+    "aliases": [
+      "RoboDance",
+      "DanceRobot",
+      "Dance7"
+    ],
+    "description": "Does the robot dance."
+  },
+  {
+    "name": "CardTrick",
+    "aliases": [
+      "MagicCards"
+    ],
+    "description": "Performs a fancy trick with playing cards."
+  },
+  {
+    "name": "Juggle",
+    "aliases": [
+      "JuggleBalls"
+    ],
+    "description": "Juggles three brightly-colored balls."
+  },
+  {
+    "name": "JuggleElectricity",
+    "aliases": [],
+    "description": "Juggles three electric sparks."
+  },
+  {
+    "name": "JuggleFire",
+    "aliases": [],
+    "description": "Juggles three fireballs."
+  },
+  {
+    "name": "JuggleMagic",
+    "aliases": [],
+    "description": "Juggles three brightly-colored magical spheres."
+  },
+  {
+    "name": "Calculate",
+    "aliases": [],
+    "description": "Traces through floating mathematical equations in the air."
+  },
+  {
+    "name": "Experiment",
+    "aliases": [
+      "MixFormula"
+    ],
+    "description": "Mixes chemicals together, which explode in one of two ways, repeats indefinitely."
+  },
+  {
+    "name": "BringIt",
+    "aliases": [],
+    "description": "Arms cartwheel in a Matrix-Style warm up pose, right hand extended forward, fingers motion twice in a \u0022come get some\u0022 taunt. Holds pose indefinitely If the character is holding props from another emote, the props will not disappear."
+  },
+  {
+    "name": "PushUp",
+    "aliases": [],
+    "description": "Character drops to a military style push-up routine, clapping hands at apex several times, then switching to one handed push-ups, repeats indefinitely."
+  },
+  {
+    "name": "Growl",
+    "aliases": [],
+    "description": "Crouch on all fours like a beast, swiping arm and making menacing head movements, repeats indefinitely."
+  },
+  {
+    "name": "ShowOff",
+    "aliases": [
+      "Boast"
+    ],
+    "description": "Puts arms out to sides, small hand movements and looking around as if to say \u0022I\u0027m awesome, look how awesome I am\u0022."
+  },
+  {
+    "name": "Propose",
+    "aliases": [
+      "Proposal",
+      "MarryMe",
+      "PoptheQuestion",
+      "MarriageProposal",
+      "ProposeMarriage"
+    ],
+    "description": "Propose, as for marriage."
+  },
+  {
+    "name": "ThrowConfetti",
+    "aliases": [
+      "Confetti",
+      "ConfettiThrow"
+    ],
+    "description": "Throws confetti into the air."
+  },
+  {
+    "name": "ThrowRice",
+    "aliases": [
+      "Rice",
+      "RiceThrow"
+    ],
+    "description": "Throws rice into the air."
+  },
+  {
+    "name": "ThrowRosePetals",
+    "aliases": [
+      "RosePetals",
+      "RosePetalsThrow"
+    ],
+    "description": "Throws rose petals into the air."
+  },
+  {
+    "name": "DrinkEnriche",
+    "aliases": [],
+    "description": "standing with and drinking from a plastic bottle of Enriche"
+  },
+  {
+    "name": "ProtestResistance",
+    "aliases": [],
+    "description": "protest against the resistance and each execution of the emote will randomly call one of the generic protest signs or one of several signs that \u0027cross out\u0027 the symbol of the resistance (the chevron)"
+  },
+  {
+    "name": "ProtestLoyalist",
+    "aliases": [],
+    "description": "protest against the loyalists and each execution of the emote will randomly call one of the generic protest signs or one of several signs that \u0027cross out\u0027 the symbol of the loyalists (the gold star)"
+  },
+  {
+    "name": "PraetorianSalute",
+    "aliases": [],
+    "description": "The Praetorian salute"
+  },
+  {
+    "name": "StanceHero1",
+    "aliases": [],
+    "description": "A heroic stance, head slightly lifted"
+  },
+  {
+    "name": "StanceHero2",
+    "aliases": [],
+    "description": "A heroic stance, turned slightly to the side"
+  },
+  {
+    "name": "StanceVillain1",
+    "aliases": [],
+    "description": "An intimidating wide stance"
+  },
+  {
+    "name": "StanceVillain2",
+    "aliases": [],
+    "description": "A judgmental stance, arms crossed"
+  },
+  {
+    "name": "AirGuitar",
+    "aliases": [
+      "dance10"
+    ],
+    "description": "Air Guitar"
+  },
+  {
+    "name": "Basketball",
+    "aliases": [],
+    "description": "Basketball Dribble"
+  },
+  {
+    "name": "DiscoDance",
+    "aliases": [
+      "dance11"
+    ],
+    "description": "Disco Dance Sweet spot to sync is when the right hand has passed over the forehead and is coming down past the eyebrow."
+  },
+  {
+    "name": "KarateDance",
+    "aliases": [
+      "dance8"
+    ],
+    "description": "Karate Dance, as if dancing to (Everyone Was) Kung Fu Fighting"
+  },
+  {
+    "name": "OpenGift",
+    "aliases": [],
+    "description": "Open Gift, the same animation as Winter Event presents"
+  },
+  {
+    "name": "Pool",
+    "aliases": [],
+    "description": "Talk Pool"
+  },
+  {
+    "name": "PopDance",
+    "aliases": [
+      "dance9"
+    ],
+    "description": "Pop Dance similar to Michael Jackson\u0027s Billie Jean stage tour. Sound is just footsteps and fabric rustling. Sweet spot to sync is when the right arm is thrust out and the left hand is behind the head."
+  },
+  {
+    "name": "Soccer",
+    "aliases": [],
+    "description": "Soccer Kick"
+  },
+  {
+    "name": "Hiss",
+    "aliases": [],
+    "description": "crouch, double handed kitty-claw swipes, return to idle, hissing sound"
+  },
+  {
+    "name": "Savage",
+    "aliases": [],
+    "description": "monkey movements including: crouched jumping, scratching head and side, final pose is crouch with arms hanging limp in front; monkey grunt noises"
+  },
+  {
+    "name": "Sniff",
+    "aliases": [],
+    "description": "crouch down with head up sniffing the air with sniffing noise"
+  },
+  {
+    "name": "HeroLoyal",
+    "aliases": [],
+    "description": "You stand akimbo on your alignment icon with seven blue stars circling you like a sash. You nod back and forth as to a crowd occasionally throwing them a pageant wave."
+  },
+  {
+    "name": "VigilanteLoyal",
+    "aliases": [],
+    "description": "You stand akimbo on your alignment icon with seven bluish purple stars circling you like a sash. You nod back and forth as to a crowd occasionally throwing them a pageant wave."
+  },
+  {
+    "name": "VillainLoyal",
+    "aliases": [],
+    "description": "You stand akimbo on your alignment icon with seven red stars circling you like a sash. You nod back and forth as to a crowd occasionally throwing them a pageant wave."
+  },
+  {
+    "name": "RogueLoyal",
+    "aliases": [],
+    "description": "You stand akimbo on your alignment icon with seven yellow stars circling you like a sash. You nod back and forth as to a crowd occasionally throwing them a pageant wave."
+  },
+  {
+    "name": "Inspiration",
+    "aliases": [],
+    "description": "You put your hand to your chin as if in thought. Then you raise your arm in the air as a light bulb hums to life over your head."
+  },
+  {
+    "name": "HotTemper",
+    "aliases": [],
+    "description": "You stomp your feet twice, waving your arms, then steam comes out your ears."
+  },
+  {
+    "name": "TrainWhistle",
+    "aliases": [],
+    "description": "An old-fashioned train whistle materializes and you pull the cord twice to make it blow."
+  },
+  {
+    "name": "Snowflakes",
+    "aliases": [
+      "ThrowSnowflakes"
+    ],
+    "description": "You throw snowflakes up into the air."
+  },
+  {
+    "name": "OfferGift",
+    "aliases": [],
+    "description": "You reach behind your back, take out a gift box, and hold it out with one hand."
+  },
+  {
+    "name": "ReceiveGift",
+    "aliases": [],
+    "description": "You raise both hands in surprise, then lay both hands out. A gift box appears in your outstretched palms, then you put it behind your back, where it disappears."
+  },
+  {
+    "name": "CatchBreath",
+    "aliases": [],
+    "description": "You bend over and put your hands on your knees as if winded."
+  },
+  {
+    "name": "UltimatePower",
+    "aliases": [],
+    "description": "You crouch briefly and raise your hands to the sky with a bolt of lightning and clap of thunder."
+  },
+  {
+    "name": "Facepalm",
+    "aliases": [],
+    "description": "You slap your hand on your face and shake your head in disbelief."
+  },
+  {
+    "name": "FireworkBloom",
+    "aliases": [],
+    "description": "You launch a single firework blast, with report, into the air."
+  },
+  {
+    "name": "FireworkRocket",
+    "aliases": [],
+    "description": "You launch four streaming fireworks into the air."
+  },
+  {
+    "name": "FireworkSparkle",
+    "aliases": [],
+    "description": "You launch a single firework blast, with crackles, into the air."
+  },
+  {
+    "name": "CCBackflip",
+    "aliases": [],
+    "description": "Performs a backflip, with a flash of light at the apex."
+  },
+  {
+    "name": "CCSalute",
+    "aliases": [],
+    "description": "Gives an informal salute, followed by a flash of light."
+  },
+  {
+    "name": "CCHowl",
+    "aliases": [],
+    "description": "Howl up at the sky, followed by a flash of light."
+  },
+  {
+    "name": "CCEvilLaugh",
+    "aliases": [],
+    "description": "Flames spread from hands while laughing evilly, then suddenly envelop body."
+  },
+  {
+    "name": "CCPeacebringer",
+    "aliases": [],
+    "description": "Uses the same animation as when a Peacebringer changes forms. Unlocked by being the Peacebringer Archetype."
+  },
+  {
+    "name": "CCWarshade",
+    "aliases": [],
+    "description": "Uses the same animation as when a Warshade changes forms. Unlocked by being the Warshade Archetype."
+  },
+  {
+    "name": "CCVanguardSigil",
+    "aliases": [],
+    "description": "Casts a sigil underfoot, raises arms and flash of light. Unlocked by purchasing for 100 Vanguard Merits at a Vanguard Crafting Table OR by unlocking the Vanguard Pack."
+  },
+  {
+    "name": "CCMurderOfCrows",
+    "aliases": [],
+    "description": "Raises arms, a murder of crows flies to the caster, then away. Unlocked by selecting it as the reward for doing Dr. Kane\u0027s House of Horror."
+  },
+  {
+    "name": "CCCast",
+    "aliases": [],
+    "description": "Thrusts out one arm as in casting a magic spell, followed by a flash of light."
+  },
+  {
+    "name": "CCSpin",
+    "aliases": [],
+    "description": "Winds up and spins around, creating a small tornado, followed by a flash of light."
+  },
+  {
+    "name": "CCLightning",
+    "aliases": [],
+    "description": "Reaches one arm up, and is struck by lightning from above."
+  },
+  {
+    "name": "CCPrestoChango",
+    "aliases": [],
+    "description": "Reaches both arms up, and is surrounded by a cloud of smoke which fades."
+  },
+  {
+    "name": "CCDrinkFormula",
+    "aliases": [],
+    "description": "Chug an Erlenmeyer flask of green liquid, smash it on the ground, writhe as if in pain, followed by a sudden burst of yellow smoke."
+  },
+  {
+    "name": "CCSuperSerum",
+    "aliases": [],
+    "description": "Jab GIANT hypodermic needle into right arm, glow brightly while beating chest, glow fades."
+  },
+  {
+    "name": "CCSmokeBomb",
+    "aliases": [],
+    "description": "Throw a smoke bomb to the floor, obscuring the character, smash it on the ground then the smoke slowly clears. When Flying - Smokebomb is thrown, costume changes, then smoke appears and vanishes. Possibly a bug as the smoke is delayed."
+  },
+  {
+    "name": "CCNinjaLeap",
+    "aliases": [],
+    "description": "Crouch and then spring swiftly into the air (with a whoosh sound) vanishing then reappear, landing from above in a crouch, then standing. When Flying - Character leaps, spinning corkscrew style upwards, when landing, the \u0022crane\u0022 pose is taken on by the flying character instead of the crouch-then-stand. Crane Pose is maintained."
+  },
+  {
+    "name": "CCDimensionShift",
+    "aliases": [],
+    "description": "Make the Teleport arm movement, several transparent \u0027ghost\u0027 copies of the character\u0027s body expand out to either side; the copies fold back into the character, and in a flash of light, costume changes."
+  },
+  {
+    "name": "CCEnergyMorph",
+    "aliases": [],
+    "description": "Crouch on all fours on floor; blue energy bubble appears around character; explodes out, leaving character in different costume and a crater effect on the floor. Flying: Hang limp in the air"
+  },
+  {
+    "name": "CCRapidBoil",
+    "aliases": [],
+    "description": "Lean forward as in pain, green bubbles ooze to the surface, then explode in a huge green spray, leaving character in different costume."
+  },
+  {
+    "name": "CCFeatherBurst",
+    "aliases": [],
+    "description": "Scrunch down and shake, flash of light, and burst of feathers."
+  },
+  {
+    "name": "CCFeatherSpin",
+    "aliases": [],
+    "description": "Whirlwind spin, flash of light, and burst of feathers."
+  },
+  {
+    "name": "CCFurBurst",
+    "aliases": [],
+    "description": "Scrunch down and shake, grey cloud, and burst of fur."
+  },
+  {
+    "name": "CCFurSpin",
+    "aliases": [],
+    "description": "Whirlwind spin, grey cloud, and burst of fur."
+  },
+  {
+    "name": "CCPressureRelease",
+    "aliases": [],
+    "description": "You stomp on the ground and are engulfed in the resulting cloud of steam.."
+  },
+  {
+    "name": "CCOilStrike",
+    "aliases": [],
+    "description": "You summon an eruption of black liquid from below and are quickly covered completely by it."
+  },
+  {
+    "name": "CCGiftBurst",
+    "aliases": [],
+    "description": "You look up and a gift box lands on you, then you burst out in a shower of confetti."
+  },
+  {
+    "name": "CCFireworks",
+    "aliases": [],
+    "description": "You raise your arms as fireworks erupt from your feet in a flash of light and sound."
+  },
+  {
+    "name": "CCIceBlock",
+    "aliases": [],
+    "description": "You crouch down, encasing yourself in a block of ice, then burst free."
+  },
+  {
+    "name": "CCNuke",
+    "aliases": [],
+    "description": "You crouch down, then explode up in a nuclear mushroom cloud."
+  },
+  {
+    "name": "CCPureEnergy",
+    "aliases": [],
+    "description": "You crouch in, as if the center of an atom molecule, and explode in a burst of energy."
+  },
+  {
+    "name": "CCStoneBlock",
+    "aliases": [],
+    "description": "You crouch down, encasing yourself in a block of stone, then burst free."
+  },
+  {
+    "name": "CCConfettiThrow",
+    "aliases": [],
+    "description": "You reach into your pocket and throw confetti into the air in a burst of light."
+  },
+  {
+    "name": "CCInnerWill",
+    "aliases": [],
+    "description": "You channel energy from deep within yourself and release it in a burst of light."
+  },
+  {
+    "name": "CCLightMagic",
+    "aliases": [],
+    "description": "A swirling cirlce of runes appears at your feet, engulfs you in bright light, and you emerge in a burst of light."
+  },
+  {
+    "name": "CCRainbow",
+    "aliases": [],
+    "description": "You are brightly illuminated by the end of a rainbow and you emerge in a burst of light."
+  }
+]

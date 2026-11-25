@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.SystemSection.ViewModels"
+             x:Class="CityHelper.Tools.SystemSection.Views.SystemInformationView"
+             x:DataType="vm:SystemInformationViewModel">
+
+  <StackPanel Spacing="4">
+    <TextBlock Text="Settings file" FontWeight="SemiBold" />
+    <TextBlock Text="{Binding SettingsFile}" TextWrapping="Wrap" />
+    <TextBlock Text="{Binding StorageMode}" Opacity="0.7" TextWrapping="Wrap" />
+
+    <TextBlock Text="Installations" FontWeight="SemiBold" Margin="0,14,0,0" />
+    <TextBlock Text="{Binding Installations}" TextWrapping="Wrap" />
+  </StackPanel>
+</UserControl>

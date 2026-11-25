@@ -10,9 +10,9 @@
 
     <!-- Grid: display name | keywords | the four channels | Edit -->
     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-      <Border BorderBrush="#555" BorderThickness="1">
+      <Border BorderBrush="{DynamicResource ChBorder2}" BorderThickness="1">
         <Grid RowDefinitions="Auto,Auto">
-          <Grid ColumnDefinitions="150,*,48,52,78,68,70" Background="#333">
+          <Grid ColumnDefinitions="150,*,48,52,78,68,70" Background="{DynamicResource ChHeader}">
             <TextBlock Grid.Column="0" Text="Display Name" Margin="8,4" FontWeight="SemiBold" />
             <TextBlock Grid.Column="1" Text="Keywords" Margin="8,4" FontWeight="SemiBold" />
             <TextBlock Grid.Column="2" Text="Tell" Margin="4,4" FontWeight="SemiBold" HorizontalAlignment="Center" />

@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:CityHelper.Tools.PopMenuHero.ViewModels"
         xmlns:app="using:CityHelper.Tools.PopMenuHero"
+        xmlns:rb="using:CityHelper.Ribbon"
         xmlns:ctl="using:CityHelper.Tools.PopMenuHero.Controls"
         x:Class="CityHelper.Tools.PopMenuHero.Views.PopMenuHeroView"
         x:DataType="vm:PopMenuHeroViewModel"
@@ -68,7 +69,7 @@
         <Setter Property="IsVisible" Value="False" />
       </Style>
       <Style Selector="^ /template/ Border#PART_Header:pointerover > DockPanel > ContentPresenter#PART_HeaderPresenter">
-        <Setter Property="Background" Value="#e8f4fd" />
+        <Setter Property="Background" Value="{DynamicResource ChHover}" />
       </Style>
       <Style Selector="^:selected /template/ ContentPresenter#PART_HeaderPresenter">
         <Setter Property="Background" Value="#0078d4" />
@@ -89,26 +90,26 @@
       <Setter Property="Margin" Value="1,0" />
     </Style>
     <Style Selector="Border.toolbar Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Background" Value="#d0e8ff" />
+      <Setter Property="Background" Value="{DynamicResource ChToolHover}" />
     </Style>
 
     <Style Selector="WrapPanel.add Button">
       <Setter Property="FontSize" Value="12" />
       <Setter Property="Padding" Value="8,3" />
       <Setter Property="Margin" Value="0,4,4,0" />
-      <Setter Property="BorderBrush" Value="#aaa" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ChBorder2}" />
       <Setter Property="BorderThickness" Value="1" />
     </Style>
 
     <Style Selector="Button.delete">
-      <Setter Property="Foreground" Value="#900" />
-      <Setter Property="Background" Value="#fff0f0" />
-      <Setter Property="BorderBrush" Value="#c00" />
+      <Setter Property="Foreground" Value="{DynamicResource ChDelFg}" />
+      <Setter Property="Background" Value="{DynamicResource ChDelBg}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ChDelBorder}" />
       <Setter Property="BorderThickness" Value="1" />
     </Style>
     <Style Selector="Button.delete:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Background" Value="#fdd" />
-      <Setter Property="Foreground" Value="#900" />
+      <Setter Property="Background" Value="{DynamicResource ChDelHover}" />
+      <Setter Property="Foreground" Value="{DynamicResource ChDelFg}" />
     </Style>
 
     <!-- Property form rows -->
@@ -120,7 +121,7 @@
       <Setter Property="HorizontalAlignment" Value="Right" />
       <Setter Property="VerticalAlignment" Value="Center" />
       <Setter Property="Margin" Value="0,0,8,0" />
-      <Setter Property="Foreground" Value="#555" />
+      <Setter Property="Foreground" Value="{DynamicResource ChMuted}" />
     </Style>
     <Style Selector="Grid.field > TextBlock.top">
       <Setter Property="VerticalAlignment" Value="Top" />
@@ -142,16 +143,34 @@
       <Setter Property="Spacing" Value="3" />
     </Style>
     <Style Selector="StackPanel.undocumented > TextBlock">
-      <Setter Property="Foreground" Value="#999" />
+      <Setter Property="Foreground" Value="{DynamicResource ChMuted2}" />
       <Setter Property="FontStyle" Value="Italic" />
       <Setter Property="FontSize" Value="11" />
     </Style>
   </UserControl.Styles>
 
-  <ThemeVariantScope RequestedThemeVariant="Light">
-  <DockPanel Background="#f0f0f0">
-    <Border DockPanel.Dock="Top" Background="#f0f0f0" BorderBrush="#ccc" BorderThickness="0,0,0,1" Padding="8,4">
-      <TextBlock Text="{Binding WindowTitle}" FontWeight="SemiBold" Foreground="#333" />
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Classes="toolbar" Background="{DynamicResource ChPanel}" BorderBrush="{DynamicResource ChBorder}" BorderThickness="0,0,0,1" Padding="8,4">
+      <DockPanel>
+        <ItemsControl DockPanel.Dock="Left" ItemsSource="{Binding ToolbarCommands}" Margin="0,0,16,0">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="rb:RibbonCommand">
+              <Panel>
+                <Button Command="{Binding Command}" ToolTip.Tip="{Binding Tooltip}"
+                        IsVisible="{Binding !IsSeparator}">
+                  <PathIcon Data="{Binding Icon}" Width="16" Height="16" />
+                </Button>
+                <Border Width="1" Margin="6,2" Background="{DynamicResource ChBorder}" IsVisible="{Binding IsSeparator}" />
+              </Panel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Text="{Binding WindowTitle}" FontWeight="SemiBold"
+                   VerticalAlignment="Center" />
+      </DockPanel>
     </Border>
 
     <Grid ColumnDefinitions="*,4,400" Margin="4">
@@ -175,7 +194,7 @@
           <TreeView x:Name="Tree"
                     ItemsSource="{Binding RootItems}"
                     SelectedItem="{Binding SelectedNode, Mode=TwoWay}"
-                    Background="#fafafa" BorderBrush="#ccc" BorderThickness="1" CornerRadius="4"
+                    Background="{DynamicResource ChTree}" BorderBrush="{DynamicResource ChBorder}" BorderThickness="1" CornerRadius="4"
                     FontSize="13" Padding="2">
             <TreeView.KeyBindings>
               <KeyBinding Gesture="Ctrl+Z" Command="{Binding UndoCommand}" />
@@ -220,9 +239,9 @@
 
       <!-- Right: property panel + optional MNU preview -->
       <Grid Grid.Column="2" x:Name="RightPanel" MinWidth="280">
-        <DockPanel Grid.Row="0" Background="#f5f5f5">
+        <DockPanel Grid.Row="0" Background="{DynamicResource ChPanel}">
           <TextBlock DockPanel.Dock="Top" Text="No item selected" FontSize="15" FontWeight="Bold"
-                     Foreground="#333" Margin="12,12,12,4"
+                     Margin="12,12,12,4"
                      IsVisible="{Binding SelectedNode, Converter={x:Static ObjectConverters.IsNull}}" />
           <Border DockPanel.Dock="Top" Margin="8,8,8,0" Padding="10,6" CornerRadius="4"
                   Background="{Binding SelectedNode.Kind, Converter={x:Static app:NodeKindBrushConverter.Header}, FallbackValue={x:Null}}"
@@ -280,10 +299,12 @@
                       <TextBox Grid.Column="1" Classes="multiline" Text="{Binding Command}"
                                PlaceholderText="Command string (use $$ to chain)" />
                     </Grid>
-                    <Grid Classes="field" ColumnDefinitions="120,*,Auto">
+                    <Grid Classes="field" ColumnDefinitions="120,*,Auto,Auto">
                       <TextBlock Text="Icon:" />
                       <TextBox Grid.Column="1" Text="{Binding Icon}" />
-                      <ctl:HelpButton Grid.Column="2" Margin="4,0,0,0" ToolTip.Tip="Open icon reference"
+                      <Button Grid.Column="2" Margin="4,0,0,0" Content="Lookup..." Click="OnLookupIcon"
+                              ToolTip.Tip="Pick a macro image: sections, pictures and texture names" />
+                      <ctl:HelpButton Grid.Column="3" Margin="4,0,0,0" ToolTip.Tip="Open icon reference"
                                       Url="https://homecoming.wiki/wiki/Macro_image_(Slash_Command)" />
                     </Grid>
                     <Grid Classes="field" ColumnDefinitions="120,*,Auto">
@@ -391,5 +412,4 @@
       </Grid>
     </Grid>
   </DockPanel>
-  </ThemeVariantScope>
 </UserControl>

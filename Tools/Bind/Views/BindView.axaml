@@ -4,11 +4,25 @@
              x:Class="CityHelper.Tools.Bind.Views.BindView"
              x:DataType="vm:BindViewModel">
 
+  <UserControl.Styles>
+    <!-- Sortable column headers look like the plain header text -->
+    <Style Selector="Button.header">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+    </Style>
+  </UserControl.Styles>
+
   <DockPanel Margin="16">
     <StackPanel DockPanel.Dock="Top" Spacing="8">
       <StackPanel Orientation="Horizontal" Spacing="10">
         <TextBlock Text="Section:" VerticalAlignment="Center" />
         <ComboBox MinWidth="340" ItemsSource="{Binding Sections}" SelectedItem="{Binding SelectedSection}" />
+        <Button Content="Reload" Command="{Binding ReloadCommand}"
+                ToolTip.Tip="Discard unsaved changes and read the file again" />
 
         <TextBlock Text="File:" VerticalAlignment="Center" Margin="10,0,0,0" IsVisible="{Binding IsFolderSection}" />
         <ComboBox MinWidth="220" ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}"
@@ -18,17 +32,21 @@
 
       <StackPanel Orientation="Horizontal" Spacing="10">
         <Button Content="Add Bind" Command="{Binding AddRowCommand}" />
+        <Button Content="Save" Command="{Binding SaveCommand}"
+                ToolTip.Tip="Save the changes to this file (Ctrl+S). The original is kept in the backup folder." />
         <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Opacity="0.7" TextTrimming="CharacterEllipsis" />
       </StackPanel>
 
-      <Grid ColumnDefinitions="220,*,40" Background="#333" Margin="0,4,0,0">
-        <TextBlock Grid.Column="0" Text="Key" Margin="8,4" FontWeight="SemiBold" />
-        <TextBlock Grid.Column="1" Text="Command" Margin="8,4" FontWeight="SemiBold" />
+      <Grid ColumnDefinitions="220,*,40" ColumnSpacing="6" Background="{DynamicResource ChHeader}" Margin="0,4,0,0">
+        <Button Grid.Column="0" Content="{Binding KeyHeader}" Command="{Binding SortByKeyCommand}" Classes="header"
+                ToolTip.Tip="Click to sort by key; click again to reverse. The file keeps its own order." />
+        <Button Grid.Column="1" Content="{Binding CommandHeader}" Command="{Binding SortByCommandCommand}" Classes="header"
+                ToolTip.Tip="Click to sort by command; click again to reverse. The file keeps its own order." />
       </Grid>
     </StackPanel>
 
-    <ScrollViewer>
-      <ItemsControl ItemsSource="{Binding Rows}">
+    <ScrollViewer x:Name="RowScroller">
+      <ItemsControl x:Name="RowList" ItemsSource="{Binding Rows}">
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="vm:BindRowViewModel">
             <Grid ColumnDefinitions="220,*,40" ColumnSpacing="6" Margin="0,2">

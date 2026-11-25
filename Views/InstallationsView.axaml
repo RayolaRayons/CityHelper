@@ -7,10 +7,10 @@
   <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
 
     <!-- Two-column grid: Display Name | City of Heroes folder -->
-    <Border BorderBrush="#555" BorderThickness="1">
+    <Border BorderBrush="{DynamicResource ChBorder2}" BorderThickness="1">
       <Grid RowDefinitions="Auto,Auto">
-        <Grid Grid.Row="0" ColumnDefinitions="220,*" Background="#333">
-          <Border Grid.Column="0" Padding="8,4" BorderBrush="#555" BorderThickness="0,0,1,0">
+        <Grid Grid.Row="0" ColumnDefinitions="220,*" Background="{DynamicResource ChHeader}">
+          <Border Grid.Column="0" Padding="8,4" BorderBrush="{DynamicResource ChBorder2}" BorderThickness="0,0,1,0">
             <TextBlock Text="Display Name" FontWeight="SemiBold"/>
           </Border>
           <Border Grid.Column="1" Padding="8,4">

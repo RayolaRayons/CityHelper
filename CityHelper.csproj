@@ -4,10 +4,26 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
+    <!-- Sub-projects, build output and scripts in subfolders are not part of this project -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);CityHelper.Desktop\**;CityHelper.Tests\**;dist\**;build\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="CityHelper.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <!-- The slash command list made from the wiki is built into the program as a plain resource (read without Avalonia running) -->
+    <AvaloniaResource Remove="Assets\SlashCommands.json" />
+    <EmbeddedResource Include="Assets\SlashCommands.json" LogicalName="CityHelper.SlashCommands.json" />
+    <AvaloniaResource Remove="Assets\Emotes.json" />
+    <EmbeddedResource Include="Assets\Emotes.json" LogicalName="CityHelper.Emotes.json" />
+    <!-- The macro image list and its pictures (a zip of the Cache\MacroImages folder), unpacked on first use -->
+    <AvaloniaResource Remove="Assets\badges-all.json" />
+    <EmbeddedResource Include="Assets\badges-all.json" LogicalName="CityHelper.Badges.json" />
+    <AvaloniaResource Remove="Assets\MacroImages.zip" />
+    <EmbeddedResource Include="Assets\MacroImages.zip" LogicalName="CityHelper.MacroImages.zip" />
   </ItemGroup>
 
   <ItemGroup>

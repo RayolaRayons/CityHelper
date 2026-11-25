@@ -25,49 +25,7 @@ public sealed class PopMenuHeroTool : ITool
 
     public System.Windows.Input.ICommand? SaveCommand => _vm.Value.SaveCommand;
 
-    /// <summary>Document commands on the File tab. Save is the File tab's global Save (see SaveCommand).</summary>
-    public IReadOnlyList<RibbonGroup> FileGroups
-    {
-        get
-        {
-            var vm = _vm.Value;
-            return new[]
-            {
-                new RibbonGroup("Document", new[]
-                {
-                    new RibbonCommand("New", vm.NewCommand),
-                    new RibbonCommand("Open", vm.OpenCommand),
-                    new RibbonCommand("Save As", vm.SaveAsCommand),
-                    new RibbonCommand("Import", vm.ImportMenuCommand),
-                }),
-            };
-        }
-    }
-
-    public IReadOnlyList<RibbonGroup> RibbonGroups
-    {
-        get
-        {
-            var vm = _vm.Value;
-            return new[]
-            {
-                new RibbonGroup("Edit", new[]
-                {
-                    new RibbonCommand("Undo", vm.UndoCommand),
-                    new RibbonCommand("Copy", vm.CopyCommand),
-                    new RibbonCommand("Paste", vm.PasteCommand),
-                    new RibbonCommand("Delete", vm.DeleteSelectedCommand),
-                }),
-                new RibbonGroup("View", new[]
-                {
-                    new RibbonCommand("Expand All", vm.ExpandAllCommand),
-                    new RibbonCommand("Collapse Root", vm.CollapseToRootCommand),
-                    new RibbonCommand("Collapse All", vm.CollapseAllCommand),
-                    new RibbonCommand("MNU Preview", vm.OpenPreviewCommand),
-                }),
-            };
-        }
-    }
+    // File and edit/view commands live in the toolbar at the top of the view (PopMenuHeroViewModel.ToolbarCommands).
 
     public IReadOnlyList<RibbonGroup> InformationGroups
     {

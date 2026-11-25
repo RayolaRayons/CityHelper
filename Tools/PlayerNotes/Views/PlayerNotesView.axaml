@@ -22,7 +22,7 @@
       <Setter Property="BorderThickness" Value="0" />
       <Setter Property="Padding" Value="2,0" />
       <Setter Property="FontSize" Value="22" />
-      <Setter Property="Foreground" Value="#555" />
+      <Setter Property="Foreground" Value="{DynamicResource ChStarOff}" />
     </Style>
     <Style Selector="Button.star.on">
       <Setter Property="Foreground" Value="#FFC800" />
@@ -38,7 +38,7 @@
       <Setter Property="Foreground" Value="#FFC800" />
     </Style>
     <Style Selector="Button.star:not(:pointerover):not(.on) /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Foreground" Value="#555" />
+      <Setter Property="Foreground" Value="{DynamicResource ChStarOff}" />
     </Style>
 
     <!-- A cell shows about three lines and scrolls inside itself when there is more -->
@@ -55,13 +55,15 @@
     <StackPanel DockPanel.Dock="Top" Spacing="8">
       <StackPanel Orientation="Horizontal" Spacing="10">
         <TextBlock Text="Filter:" VerticalAlignment="Center" />
-        <TextBox Width="300" Text="{Binding Filter}" PlaceholderText="global or character name"
-                 ToolTip.Tip="Shows players whose global name, or any of their characters, contains this text" />
+        <TextBox Width="300" Text="{Binding Filter}" PlaceholderText="global name, character or notes"
+                 ToolTip.Tip="Shows players whose global name, any of their characters, or their notes contain this text" />
         <Button Content="Add Player" Command="{Binding AddRowCommand}" />
+        <Button Content="Reload" Command="{Binding ReloadCommand}"
+                ToolTip.Tip="Discard unsaved changes and read the file again" />
         <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Opacity="0.7" TextTrimming="CharacterEllipsis" />
       </StackPanel>
 
-      <Grid ColumnDefinitions="200,130,*,2*,40" Background="#333" Margin="0,4,18,0">
+      <Grid ColumnDefinitions="200,130,*,2*,40" Background="{DynamicResource ChHeader}" Margin="0,4,18,0">
         <Button Grid.Column="0" Content="{Binding NameHeader}" Command="{Binding SortByNameCommand}" Classes="header"
                 ToolTip.Tip="Click to sort by name; click again to reverse" />
         <Button Grid.Column="1" Content="{Binding StarsHeader}" Command="{Binding SortByStarsCommand}" Classes="header"

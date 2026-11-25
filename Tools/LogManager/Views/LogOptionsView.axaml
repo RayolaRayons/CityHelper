@@ -7,14 +7,33 @@
   <StackPanel Spacing="10">
 
     <StackPanel Orientation="Horizontal" Spacing="10">
-      <TextBlock Text="Preset:" VerticalAlignment="Center" />
-      <ComboBox MinWidth="160" ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset}" />
+      <TextBlock Text="Merge type:" VerticalAlignment="Center" />
+      <ComboBox MinWidth="140" ItemsSource="{Binding MergeModes}" SelectedItem="{Binding SelectedMergeMode}"
+                ToolTip.Tip="Which merge button Log Manager shows. No merge: only Merge (the checked files into one). Weekly / Monthly: also Merge Weekly / Merge Monthly, which combines the daily logs into one file per week / month. /MergeLog follows this setting too." />
     </StackPanel>
-    <TextBlock Text="RP selects Broadcast, Coalition, Looking for group, Request, Supergroup, Team, Tell, League, Local and Emotes."
+    <TextBlock Text="Merge always combines the files you check into one. Weekly or Monthly adds a Merge Weekly / Merge Monthly button for the daily logs, and sets what /MergeLog does."
                Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
 
-    <CheckBox Content="Backup Merged Files (move merged sources into an Archive subfolder)"
-              IsChecked="{Binding BackupMergedFiles}" />
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <TextBlock Text="System channel fix:" VerticalAlignment="Center" />
+      <ComboBox MinWidth="140" ItemsSource="{Binding SystemFixModes}" SelectedItem="{Binding SelectedSystemFix}"
+                ToolTip.Tip="A channel that is a timestamp, e.g. [05:53], becomes [System]. Manual: only when you press Fix System (or run /FixSystem). At merge: also on the files being merged, when a merge starts." />
+    </StackPanel>
+    <TextBlock Text="Fix System and /FixSystem are always available. At merge also fixes the files being merged, when a merge starts."
+               Opacity="0.65" FontSize="11" TextWrapping="Wrap" />
+
+    <CheckBox Content="Validate orphaned daily logs"
+              IsChecked="{Binding ValidateOrphanedDailies}"
+              ToolTip.Tip="When the folder is read, a daily log whose entries are all already in a weekly or monthly log covering its date is moved to the copies folder." />
+
+    <CheckBox Content="Keep copies of changed logs"
+              IsChecked="{Binding KeepCopies}"
+              ToolTip.Tip="Before a log is changed (merge, System channel fix, Insert Channels, cleanup) a copy is kept: merged source files are moved, other copies get the date and time added to their name." />
+    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6" Margin="24,0,0,0" IsEnabled="{Binding KeepCopies}">
+      <TextBlock Text="Copies folder:" VerticalAlignment="Center" />
+      <TextBox Grid.Column="1" Text="{Binding CopiesFolder}" PlaceholderText="empty = the Archive folder inside the logs folder" />
+      <Button Grid.Column="2" Content="Browse..." Click="OnBrowseCopiesFolder" />
+    </Grid>
 
     <TextBlock Text="Items to include" FontWeight="SemiBold" Margin="0,6,0,0" />
     <TextBlock Text="Cleanup Logfile removes entries from the channels that are unchecked."

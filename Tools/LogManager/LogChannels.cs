@@ -25,19 +25,14 @@ public enum LogChannel
     Npc,
     System,
     AeTickets,
+    Reward,
+    Auction,
     Unknown,
 }
 
 public static class LogChannels
 {
     public static readonly IReadOnlyList<LogChannel> All = Enum.GetValues<LogChannel>();
-
-    /// <summary>Channels the RP preset keeps.</summary>
-    public static readonly IReadOnlySet<LogChannel> RpPreset = new HashSet<LogChannel>
-    {
-        LogChannel.Broadcast, LogChannel.Coalition, LogChannel.LookingForGroup, LogChannel.Request,
-        LogChannel.Supergroup, LogChannel.Team, LogChannel.Tell, LogChannel.League, LogChannel.Local, LogChannel.Emotes,
-    };
 
     public static string DisplayName(LogChannel c) => c switch
     {
@@ -48,6 +43,9 @@ public static class LogChannels
         LogChannel.AeTickets => "AE Tickets",
         _ => c.ToString(),
     };
+
+    /// <summary>The name written in brackets when a channel is inserted into a line.</summary>
+    public static string TagName(LogChannel c) => c.ToString();
 
     /// <summary>Stable key used in the ini file.</summary>
     public static string Key(LogChannel c) => c.ToString().ToLowerInvariant();
@@ -75,6 +73,17 @@ public static class LogClassifier
         @"^(You (hit|miss|gain|heal|stun|defeated|activated|resist|are (hit|healed|stunned|held|slept|immobilized|knocked|terrorized|confused|feared|blinded)|were)\b" +
         @"|Your combat improves" +
         @"|.+ (hits|misses|has defeated|heals|stuns|is defeated|was defeated|resists) )",
+        RegexOptions.Compiled);
+
+    // Power use and to-hit roll messages:
+    //   "Parry is recharged." / "Hack is still recharging." / "Readying Hack." / "Now readying Parry instead of Hack."
+    //   "HIT Dark Ring Mistress! Your Hack power had a 78.53% chance to hit, you rolled a 6.34."
+    //   "Dark Ring Mistress MISSES! Subdue power had ..." / "Porche HITS you! ... power was autohit."
+    private static readonly Regex PowerLine = new(
+        @"^(.+ is (still recharging|recharged)\.$" +
+        @"|(Now )?[Rr]eadying .+\.$" +
+        @"|HIT .+! .+ power" +
+        @"|.+ (HITS|MISSES)( you)?! .+ power)",
         RegexOptions.Compiled);
 
     private static readonly Regex SystemLine = new(
@@ -109,6 +118,9 @@ public static class LogClassifier
                 "supergroup" or "sg" => LogChannel.Supergroup,
                 "coalition" => LogChannel.Coalition,
                 "npc" => LogChannel.Npc,
+                "combat" => LogChannel.Combat,
+                "reward" => LogChannel.Reward,
+                "auction" => LogChannel.Auction,
                 "pet" => LogChannel.PetMessages,
                 "emote" => LogChannel.Emotes,
                 _ when SystemTags.Contains(tag) => LogChannel.System,
@@ -117,7 +129,10 @@ public static class LogClassifier
             };
         }
 
-        if (CombatLine.IsMatch(rest))
+        // The messages listed in remove_color_tags.py name their own type
+        if (KnownMessages.Identify(rest) is { } known)
+            return known;
+        if (CombatLine.IsMatch(rest) || PowerLine.IsMatch(rest))
             return LogChannel.Combat;
         if (SystemLine.IsMatch(rest))
             return LogChannel.System;

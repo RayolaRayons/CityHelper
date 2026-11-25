@@ -1,0 +1,117 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.Scheduler.ViewModels"
+             x:Class="CityHelper.Tools.Scheduler.Views.SchedulerView"
+             x:DataType="vm:SchedulerViewModel">
+
+  <!-- Two halves, one above the other: the schedules (top) and the selected schedule's parameters (bottom) -->
+  <Grid RowDefinitions="*,6,*" Margin="16">
+
+    <!-- Top: the scheduled tasks of the current installation and account -->
+    <DockPanel Grid.Row="0">
+      <StackPanel DockPanel.Dock="Top" Spacing="8">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Button Content="Add Schedule" Command="{Binding AddScheduleCommand}" Padding="18,6"
+                  ToolTip.Tip="Start a new schedule in the editor below" />
+          <Button Content="Task Scheduler" Command="{Binding OpenTaskSchedulerCommand}" Padding="18,6"
+                  ToolTip.Tip="Open the Windows Task Scheduler (the tasks are in the CityHelper folder)" />
+          <Button Content="Refresh" Command="{Binding RefreshCommand}" Padding="14,6" />
+        </StackPanel>
+        <TextBlock Text="{Binding HeaderText}" Opacity="0.7" TextTrimming="CharacterEllipsis" />
+        <TextBlock Text="{Binding StatusText}" Foreground="{DynamicResource ChWarn}" TextWrapping="Wrap" />
+      </StackPanel>
+
+      <Grid DockPanel.Dock="Top" ColumnDefinitions="170,*,190,150,150,110" Margin="12,8,12,2">
+        <TextBlock Grid.Column="0" Text="Name" FontWeight="SemiBold" Opacity="0.8" />
+        <TextBlock Grid.Column="1" Text="Runs" FontWeight="SemiBold" Opacity="0.8" />
+        <TextBlock Grid.Column="2" Text="Schedule" FontWeight="SemiBold" Opacity="0.8" />
+        <TextBlock Grid.Column="3" Text="Next run" FontWeight="SemiBold" Opacity="0.8" />
+        <TextBlock Grid.Column="4" Text="Last run" FontWeight="SemiBold" Opacity="0.8" />
+        <TextBlock Grid.Column="5" Text="Last result" FontWeight="SemiBold" Opacity="0.8" />
+      </Grid>
+      <Border BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
+        <ListBox ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}" SelectionMode="Single">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:SchedulerRow">
+              <Grid ColumnDefinitions="170,*,190,150,150,110">
+                <TextBlock Grid.Column="0" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="1" Text="{Binding Commands}" TextTrimming="CharacterEllipsis" Opacity="0.9" />
+                <TextBlock Grid.Column="2" Text="{Binding Schedule}" TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="3" Text="{Binding NextRun}" TextTrimming="CharacterEllipsis" Opacity="0.85" />
+                <TextBlock Grid.Column="4" Text="{Binding LastRun}" TextTrimming="CharacterEllipsis" Opacity="0.85" />
+                <TextBlock Grid.Column="5" Text="{Binding Result}" TextTrimming="CharacterEllipsis" Opacity="0.85" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Border>
+    </DockPanel>
+
+    <GridSplitter Grid.Row="1" Height="6" Background="{DynamicResource ChBorder}" ResizeDirection="Rows" />
+
+    <!-- Bottom: command line parameters and start time -->
+    <ScrollViewer Grid.Row="2" Margin="0,8,0,0">
+      <StackPanel Spacing="10" Margin="0,0,12,0">
+        <TextBlock Text="Schedule" FontSize="16" FontWeight="SemiBold" />
+
+        <Grid ColumnDefinitions="110,*" ColumnSpacing="8">
+          <TextBlock Text="Name:" VerticalAlignment="Center" />
+          <TextBox Grid.Column="1" Text="{Binding ScheduleName}" MaxWidth="360" HorizontalAlignment="Left" Width="360" />
+        </Grid>
+
+        <Grid ColumnDefinitions="110,*" ColumnSpacing="8">
+          <TextBlock Text="Command line:" VerticalAlignment="Top" Margin="0,4,0,0" />
+          <StackPanel Grid.Column="1" Spacing="6">
+            <ItemsControl ItemsSource="{Binding Commands}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:CommandToggle">
+                  <CheckBox Content="{Binding Label}" IsChecked="{Binding IsChecked}" Margin="0,0,16,0" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <CheckBox Content="/force" IsChecked="{Binding Force}"
+                      ToolTip.Tip="Clean up logs without the safety check for large removals. Merge logs follows the merge type set under Options > Log Manager." />
+          </StackPanel>
+        </Grid>
+
+        <Grid ColumnDefinitions="110,*" ColumnSpacing="8">
+          <TextBlock Text="Runs:" VerticalAlignment="Center" Opacity="0.8" />
+          <TextBox Grid.Column="1" Text="{Binding CommandLinePreview}" IsReadOnly="True" FontFamily="Cascadia Mono, Consolas, monospace" FontSize="12"
+                   TextWrapping="Wrap" />
+        </Grid>
+
+        <Grid ColumnDefinitions="110,*" ColumnSpacing="8">
+          <TextBlock Text="Start:" VerticalAlignment="Top" Margin="0,6,0,0" />
+          <StackPanel Grid.Column="1" Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <ComboBox MinWidth="110" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding SelectedFrequency}" />
+              <TextBlock Text="at" VerticalAlignment="Center" />
+              <TextBox Text="{Binding StartTimeText}" Width="80" PlaceholderText="03:00"
+                       ToolTip.Tip="Start time, 24 hour clock (hours:minutes)" />
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Days}" IsVisible="{Binding IsWeekly}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:DayToggle">
+                  <CheckBox Content="{Binding Label}" IsChecked="{Binding IsChecked}" Margin="0,0,12,0" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,6,0,0">
+          <Button Content="Save Schedule" Command="{Binding SaveScheduleCommand}" Padding="18,6" />
+          <Button Content="Run Now" Command="{Binding RunNowCommand}" Padding="14,6"
+                  ToolTip.Tip="Start the selected schedule's task right away" />
+          <Button Content="Delete" Command="{Binding DeleteScheduleCommand}" Padding="14,6" />
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

@@ -24,16 +24,61 @@ public static class LogMerger
     }
 
     /// <summary>True if a file exists on one side only, or exists on both with different content.</summary>
-    public static bool HasDifferences(string localDir, string syncDir)
+    public static bool HasDifferences(string localDir, string syncDir, bool validateOrphans = false)
     {
         var local = Files(localDir);
         var sync = Files(syncDir);
-        if (!local.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(sync.Keys))
+        var consolidated = validateOrphans ? new LogManager.ConsolidatedLogs(localDir) : null;
+
+        // A file only in the sync folder that Log Manager has archived locally is not a difference
+        var syncOnly = sync.Where(kv => !local.ContainsKey(kv.Key) && !IsArchivedLocally(localDir, kv.Key, kv.Value)
+                                        && !IsOrphan(consolidated, kv.Key, kv.Value)).Select(kv => kv.Key);
+        if (local.Keys.Any(k => !sync.ContainsKey(k)) || syncOnly.Any())
             return true;
-        return local.Any(kv => !SameContent(kv.Value, sync[kv.Key]));
+        return local.Any(kv => sync.TryGetValue(kv.Key, out var sp) && !SameContent(kv.Value, sp));
     }
 
-    public static CopyResult Merge(string localDir, string syncDir)
+    /// <summary>
+    /// True if the local Archive subfolder (where Log Manager moves merged and cleaned logs) holds a file with this name
+    /// and size. Such a log was deliberately moved away from the logs folder, so it must not be copied back from the
+    /// sync folder. Log Manager numbers archived duplicates "name (2).txt", so those count as the same name.
+    /// </summary>
+    private static bool IsArchivedLocally(string localDir, string name, string syncPath)
+    {
+        try
+        {
+            long size = new FileInfo(syncPath).Length;
+            var stem = Path.GetFileNameWithoutExtension(name);
+            var ext = Path.GetExtension(name);
+
+            // Log Manager moves logs to Archive in the logs folder, or to the copies folder set in its options
+            var folders = new List<string> { Path.Combine(localDir, "Archive") };
+            if (LogManager.LogManagerSettings.Load().CopiesFolder is { Length: > 0 } custom)
+                folders.Add(custom);
+
+            foreach (var archive in folders.Where(Directory.Exists))
+                foreach (var file in Directory.EnumerateFiles(archive, stem + "*" + ext, SearchOption.TopDirectoryOnly))
+                {
+                    var found = Path.GetFileNameWithoutExtension(file);
+                    bool sameName = found.Equals(stem, StringComparison.OrdinalIgnoreCase) ||
+                                    Regex.IsMatch(found, "^" + Regex.Escape(stem) + @" \(\d+\)$", RegexOptions.IgnoreCase);
+                    if (sameName && Path.GetExtension(file).Equals(ext, StringComparison.OrdinalIgnoreCase)
+                        && new FileInfo(file).Length == size)
+                        return true;
+                }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // an unreadable archive folder means nothing is known to be archived
+        }
+        return false;
+    }
+
+    /// <summary>A daily log that is fully inside a weekly / monthly log of this folder was merged elsewhere.</summary>
+    private static bool IsOrphan(LogManager.ConsolidatedLogs? consolidated, string name, string path) =>
+        consolidated is { Any: true } && LogManager.LogOperations.IsDailyLog(name) && consolidated.Contains(path);
+
+    public static CopyResult Merge(string localDir, string syncDir, bool validateOrphans = false)
     {
         var result = new CopyResult();
         try
@@ -46,6 +91,14 @@ public static class LogMerger
             result.Errors.Add(ex.Message);
             return result;
         }
+
+        // Local daily logs that are already inside a weekly / monthly log go to the Archive first
+        if (validateOrphans)
+        {
+            var archived = LogManager.LogOperations.ArchiveContainedDailies(localDir, LogManager.LogManagerSettings.Load().CopiesFolder);
+            result.Errors.AddRange(archived.Errors);
+        }
+        var consolidated = validateOrphans ? new LogManager.ConsolidatedLogs(localDir) : null;
 
         var local = Files(localDir);
         var sync = Files(syncDir);
@@ -62,6 +115,11 @@ public static class LogMerger
                 }
                 else if (hasSync && !hasLocal)
                 {
+                    if (IsArchivedLocally(localDir, name, sp!) || IsOrphan(consolidated, name, sp!))
+                    {
+                        result.UpToDate++;      // Log Manager archived it on purpose: don't bring it back
+                        continue;
+                    }
                     File.Copy(sp!, Path.Combine(localDir, name), overwrite: false);
                     result.Copied++;
                 }

@@ -28,6 +28,12 @@ public sealed class LogLine
     /// <summary>True for "Name: message" lines. Emotes and system text keep their full wording in the message.</summary>
     public bool ShowCharacterPrefix { get; init; }
 
+    /// <summary>An outgoing tell ("--> Name"): shown with an arrow, but the arrow is not part of the character's name.</summary>
+    public bool IsOutgoing { get; init; }
+
+    /// <summary>The speaker as drawn in the line: the name, with the arrow in front for an outgoing tell.</summary>
+    public string CharacterDisplay => IsOutgoing ? "→ " + Character : Character;
+
     /// <summary>Message text with its color tags still in place; continuation lines are joined with a newline.</summary>
     public string Message { get; set; } = "";
 
@@ -67,7 +73,7 @@ public static class LogFileParser
 
     // Game-generated channels: no speaker, the whole rest is the message
     private static readonly HashSet<string> SpeakerlessChannels = new(StringComparer.OrdinalIgnoreCase)
-        { "system", "ppd", "fdpc", "nemesis", "vanguard", "caption", "council", "rikti" };
+        { "system", "combat", "reward", "auction", "ppd", "fdpc", "nemesis", "vanguard", "caption", "council", "rikti" };
 
     public static ParsedLog Parse(string path)
     {
@@ -124,6 +130,8 @@ public static class LogFileParser
             {
                 LogChannel.Combat => "Combat",
                 LogChannel.System => "System",
+                LogChannel.Reward => "Reward",
+                LogChannel.Auction => "Auction",
                 LogChannel.Emotes => "Emote",
                 _ => "Unknown",
             };
@@ -132,7 +140,7 @@ public static class LogFileParser
 
         var tag = channel.Groups[1].Value;
         var body = channel.Groups[2].Value;
-        var (character, message, hasSpeaker) = SplitSpeaker(tag, body);
+        var (character, message, hasSpeaker, outgoing) = SplitSpeaker(tag, body);
 
         return new LogLine
         {
@@ -143,15 +151,16 @@ public static class LogFileParser
             ChannelKey = tag.Length == 0 ? "Unknown" : tag,
             Character = character,
             ShowCharacterPrefix = hasSpeaker,
+            IsOutgoing = outgoing,
             Message = message,
             FirstLine = fullLine,
         };
     }
 
-    private static (string Character, string Message, bool HasSpeaker) SplitSpeaker(string tag, string body)
+    private static (string Character, string Message, bool HasSpeaker, bool Outgoing) SplitSpeaker(string tag, string body)
     {
         if (SpeakerlessChannels.Contains(tag))
-            return ("", body, false);
+            return ("", body, false, false);
 
         // Custom channel MOTD / handle lines look like "(null): Name: text"
         if (body.StartsWith("(null): ", StringComparison.Ordinal))
@@ -161,25 +170,25 @@ public static class LogFileParser
         {
             var incoming = IncomingTellRe.Match(body);
             if (incoming.Success)
-                return (incoming.Groups[1].Value.Trim(), incoming.Groups[2].Value, true);
+                return (incoming.Groups[1].Value.Trim(), incoming.Groups[2].Value, true, false);
             var outgoing = OutgoingTellRe.Match(body);
             if (outgoing.Success)
-                return ("→ " + outgoing.Groups[1].Value.Trim(), outgoing.Groups[2].Value, true);
-            return ("", body, false);
+                return (outgoing.Groups[1].Value.Trim(), outgoing.Groups[2].Value, true, true);
+            return ("", body, false, false);
         }
 
         // "Name: message" where the colon is followed by a space (names never contain markup)
         int colon = body.IndexOf(": ", StringComparison.Ordinal);
         if (colon <= 0 || colon > 60 || body[0] == '<')
-            return ("", body, false);
+            return ("", body, false, false);
 
         var speaker = body[..colon];
         if (speaker.Contains('<') || speaker.Contains('>'))
-            return ("", body, false);
+            return ("", body, false, false);
 
         // "(Supergroup Name)Character" prefix on coalition / pet lines
         speaker = LeadingGroupRe.Replace(speaker, "").Trim();
-        return speaker.Length == 0 ? ("", body, false) : (speaker, body[(colon + 2)..], true);
+        return speaker.Length == 0 ? ("", body, false, false) : (speaker, body[(colon + 2)..], true, false);
     }
 
     /// <summary>
@@ -189,7 +198,7 @@ public static class LogFileParser
     private static void AssignEmoteCharacters(List<LogLine> lines)
     {
         var byFirstWord = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var name in lines.Where(l => l.ShowCharacterPrefix && l.Character.Length > 0 && !l.Character.StartsWith('→'))
+        foreach (var name in lines.Where(l => l.ShowCharacterPrefix && l.Character.Length > 0)
                      .Select(l => l.Character).Distinct(StringComparer.OrdinalIgnoreCase))
         {
             var first = FirstWord(name);

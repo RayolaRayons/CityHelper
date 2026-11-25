@@ -24,7 +24,7 @@
       <CheckBox Content="Request" IsChecked="{Binding Request}" />
     </StackPanel>
 
-    <TextBlock Text="{Binding ErrorText}" Foreground="#F48771" TextWrapping="Wrap" IsVisible="{Binding ErrorText.Length}" />
+    <TextBlock Text="{Binding ErrorText}" Foreground="{DynamicResource ChError}" TextWrapping="Wrap" IsVisible="{Binding ErrorText.Length}" />
 
     <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,6,0,0">
       <Button Content="Reset to Defaults" Command="{Binding ResetToDefaultsCommand}" />

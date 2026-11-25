@@ -27,6 +27,18 @@ public class LogLineText : TextBlock
     private static readonly IBrush RemovedBackground = new SolidColorBrush(Color.Parse("#99B02020"));
     private static readonly IBrush ChannelGreen = new SolidColorBrush(Color.Parse("#6EBF6E"));
 
+    /// <summary>The channel colors are chosen for a dark background; on the light theme they are darkened to stay readable.</summary>
+    private static Color ForTheme(Color color, bool light)
+    {
+        if (!light)
+            return color;
+        double luminance = (0.2126 * color.R + 0.7152 * color.G + 0.0722 * color.B) / 255.0;
+        if (luminance <= 0.45)
+            return color;
+        double factor = 0.38 / luminance;
+        return Color.FromRgb((byte)(color.R * factor), (byte)(color.G * factor), (byte)(color.B * factor));
+    }
+
     static LogLineText()
     {
         LineProperty.Changed.AddClassHandler<LogLineText>((c, _) => c.Rebuild());
@@ -34,6 +46,21 @@ public class LogLineText : TextBlock
     }
 
     protected override Type StyleKeyOverride => typeof(TextBlock);
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        ActualThemeVariantChanged += OnThemeChanged;
+        Rebuild();                                  // the theme may differ from when the row was created
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        ActualThemeVariantChanged -= OnThemeChanged;
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    private void OnThemeChanged(object? sender, EventArgs e) => Rebuild();
 
     public LogLine? Line
     {
@@ -59,7 +86,9 @@ public class LogLineText : TextBlock
         Background = o.IsRemovedByCleanup(line) ? RemovedBackground : null;     // the whole line, wrapped or not
         var inlines = new InlineCollection();
 
-        IBrush? channelBrush = o.ChannelColors ? new SolidColorBrush(ChannelColors.For(line.ChannelKey)) : null;
+        bool light = ActualThemeVariant == Avalonia.Styling.ThemeVariant.Light;
+        IBrush? channelBrush = o.ChannelColors ? new SolidColorBrush(ForTheme(ChannelColors.For(line.ChannelKey), light)) : null;
+        var characterBlue = light ? new SolidColorBrush(Color.Parse("#0B5CAD")) : CharacterBlue;
 
         if (o.ShowDates && line.Date.Length > 0)
             inlines.Add(new Run(line.Date + " ") { Foreground = Dim });
@@ -68,7 +97,7 @@ public class LogLineText : TextBlock
         if (o.ShowChannels && line.Channel.Length > 0)
             inlines.Add(new Run($"[{line.Channel}] ") { Foreground = channelBrush ?? ChannelGreen });
         if (o.ShowCharacters && line.ShowCharacterPrefix && line.Character.Length > 0)
-            AddText(inlines, line.Character + ": ", channelBrush ?? CharacterBlue, null, FontWeight.SemiBold, o.Highlight);
+            AddText(inlines, line.CharacterDisplay + ": ", channelBrush ?? characterBlue, null, FontWeight.SemiBold, o.Highlight);
 
         // The game's color tags are not drawn (they did not match how City of Heroes uses them): hidden, or shown as written
         AddText(inlines, LogLineFormatter.MessageText(line, o.ColorCodes), channelBrush, null, FontWeight.Normal, o.Highlight);

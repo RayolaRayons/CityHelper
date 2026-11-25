@@ -8,7 +8,7 @@ using CityHelper.ViewModels;
 
 namespace CityHelper.Tools.ConfigSync;
 
-/// <summary>Compares local game config files with a sync (backup) folder, per environment.</summary>
+/// <summary>Compares local game config files with a sync folder, per environment.</summary>
 public sealed class ConfigSyncTool : ITool
 {
     private readonly AppState _state;
@@ -25,14 +25,6 @@ public sealed class ConfigSyncTool : ITool
     public ViewModelBase CreateViewModel(AppState state) => _vm.Value;
 
     public ICommand? RefreshCommand => _vm.Value.RefreshCommand;
-
-    public IReadOnlyList<RibbonGroup> RibbonGroups => new[]
-    {
-        new RibbonGroup("Config Sync", new[]
-        {
-            new RibbonCommand("Sync All", _vm.Value.SyncAllCommand, "Copy the newer side of every listed item over the older one"),
-        }),
-    };
 
     public OptionsSectionViewModel? CreateOptionsSection()
     {

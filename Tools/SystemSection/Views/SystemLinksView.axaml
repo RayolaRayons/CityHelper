@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CityHelper.Tools.SystemSection.ViewModels"
+             xmlns:rb="using:CityHelper.Ribbon"
+             x:Class="CityHelper.Tools.SystemSection.Views.SystemLinksView"
+             x:DataType="vm:SystemLinksViewModel">
+
+  <StackPanel Spacing="12">
+    <TextBlock Text="Links offered by the tools." Opacity="0.65" />
+    <ItemsControl ItemsSource="{Binding Groups}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:InfoGroup">
+          <StackPanel Spacing="6" Margin="0,0,0,10">
+            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding Links}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="rb:RibbonCommand">
+                  <Button Content="{Binding Label}" Command="{Binding Command}" Margin="0,0,8,8" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</UserControl>

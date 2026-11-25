@@ -21,11 +21,4 @@ public sealed class CharacterOrderingTool : ITool
 
     public ICommand? SaveCommand => _vm.Value.SaveCommand;
 
-    public IReadOnlyList<RibbonGroup> RibbonGroups => new[]
-    {
-        new RibbonGroup("Character Order", new[]
-        {
-            new RibbonCommand("Reload from disk", _vm.Value.ReloadCommand, "Discard unsaved changes and read the file again"),
-        }),
-    };
 }

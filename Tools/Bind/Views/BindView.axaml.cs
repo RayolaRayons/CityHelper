@@ -1,6 +1,9 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Layout;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using CityHelper.Tools.Bind.ViewModels;
 
 namespace CityHelper.Tools.Bind.Views;
@@ -12,9 +15,32 @@ public partial class BindView : UserControl
         InitializeComponent();
         DataContextChanged += (_, _) =>
         {
-            if (DataContext is BindViewModel vm)
-                vm.PromptFileName = PromptAsync;
+            if (_vm != null)
+                _vm.RowAdded -= OnRowAdded;
+            _vm = DataContext as BindViewModel;
+            if (_vm != null)
+            {
+                _vm.PromptFileName = PromptAsync;
+                _vm.RowAdded += OnRowAdded;
+            }
         };
+    }
+
+    private BindViewModel? _vm;
+
+    /// <summary>Add Bind: jump to the new blank line at the bottom and put the cursor in its Key box.</summary>
+    private void OnRowAdded(BindRowViewModel row)
+    {
+        // After layout, so the new line has been created
+        Dispatcher.UIThread.Post(() =>
+        {
+            RowScroller.ScrollToEnd();
+            if (RowList.ContainerFromIndex(RowList.ItemCount - 1) is { } container)
+            {
+                container.BringIntoView();
+                container.GetVisualDescendants().OfType<TextBox>().FirstOrDefault()?.Focus();
+            }
+        }, DispatcherPriority.Loaded);
     }
 
     private async Task<string?> PromptAsync()

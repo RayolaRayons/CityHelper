@@ -15,20 +15,28 @@ namespace CityHelper.Tools.PiggViewer.ViewModels;
 
 public sealed partial class DirectoryNodeViewModel : ObservableObject
 {
-    public DirectoryNodeViewModel(DirectoryNode node, string? displayName = null)
+    public DirectoryNodeViewModel(DirectoryNode node, string? displayName = null, DirectoryNodeViewModel? parent = null)
     {
         Node = node;
+        Parent = parent;
         Name = displayName ?? node.Name;
         foreach (var child in node.Directories)
-            Children.Add(new DirectoryNodeViewModel(child));
+            Children.Add(new DirectoryNodeViewModel(child, null, this));
     }
 
     public DirectoryNode Node { get; }
+    public DirectoryNodeViewModel? Parent { get; }
     public string Name { get; }
     public ObservableCollection<DirectoryNodeViewModel> Children { get; } = new();
 
     [ObservableProperty]
     private bool _isExpanded;
+}
+
+/// <summary>A folder under the installation's assets folder that holds archives, or one archive in it.</summary>
+public sealed record PiggChoice(string Name, string Path, bool IsAll = false)
+{
+    public override string ToString() => Name;
 }
 
 public sealed class FileRowViewModel
@@ -74,7 +82,7 @@ public static class FileTypes
 /// Browses .pigg archives (one archive, or all in a folder): folder tree, file list and a preview of the selected
 /// file (texture / text / hex), with export and creating archives from a folder. Port of the Piglet viewer.
 /// </summary>
-public sealed partial class PiggViewerViewModel : ViewModelBase
+public sealed partial class PiggViewerViewModel : ViewModelBase, IStatusSource
 {
     private const int TextPreviewLimit = 1 << 18;     // characters
     private const int HexPreviewLimit = 64 * 1024;    // bytes
@@ -88,6 +96,120 @@ public sealed partial class PiggViewerViewModel : ViewModelBase
     {
         _state = state;
         StatusText = "Open an archive or a folder of archives.";
+        _state.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(AppState.SelectedInstallation))
+                RefreshFolders();
+        };
+        RefreshFolders();
+    }
+
+    // ------------------------------------------------------------ toolbar: folder and archive pickers
+
+    public const string AllFoldersName = "(All folders under assets)";
+
+    /// <summary>Folders of the selected installation's assets folder that have archives at their top level (live, mods...), after an "all folders" entry.</summary>
+    public ObservableCollection<PiggChoice> Folders { get; } = new();
+
+    /// <summary>The archives at the top level of the chosen folder.</summary>
+    public ObservableCollection<PiggChoice> Archives { get; } = new();
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(LoadFolderCommand))]
+    private PiggChoice? _selectedFolder;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(LoadArchiveCommand))]
+    private PiggChoice? _selectedArchive;
+
+    private void RefreshFolders()
+    {
+        var previous = SelectedFolder?.Path;
+        Folders.Clear();
+        if (_state.SelectedInstallation is { } inst)
+        {
+            var assets = Path.Combine(inst.Path, "assets");
+            try
+            {
+                if (Directory.Exists(assets))
+                    foreach (var dir in Directory.EnumerateDirectories(assets).OrderBy(d => d, StringComparer.OrdinalIgnoreCase))
+                    {
+                        var name = Path.GetFileName(dir);
+                        bool hasArchives = Directory.EnumerateFiles(dir, "*.pigg", SearchOption.TopDirectoryOnly).Any();
+                        if (hasArchives || name.Equals("mods", StringComparison.OrdinalIgnoreCase))
+                            Folders.Add(new PiggChoice(name, dir));
+                    }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // an unreadable assets folder just offers nothing
+            }
+        }
+        // Everything under assets at once
+        if (Folders.Count > 0 && _state.SelectedInstallation is { } installation)
+            Folders.Insert(0, new PiggChoice(AllFoldersName, Path.Combine(installation.Path, "assets"), IsAll: true));
+
+        SelectedFolder = Folders.FirstOrDefault(f => f.Path == previous)
+                         ?? Folders.FirstOrDefault(f => !f.IsAll && f.Name.Equals(GameEnvironment(), StringComparison.OrdinalIgnoreCase))
+                         ?? Folders.FirstOrDefault(f => !f.IsAll)
+                         ?? Folders.FirstOrDefault();
+    }
+
+    partial void OnSelectedFolderChanged(PiggChoice? value)
+    {
+        Archives.Clear();
+        SelectedArchive = null;
+        if (value is null || value.IsAll)
+            return;
+        try
+        {
+            foreach (var file in Directory.EnumerateFiles(value.Path, "*.pigg", SearchOption.TopDirectoryOnly)
+                         .OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
+                Archives.Add(new PiggChoice(Path.GetFileName(file), file));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            StatusText = "Could not read the folder: " + ex.Message;
+        }
+    }
+
+    private bool CanLoadFolder => !IsBusy && SelectedFolder != null;
+    private bool CanLoadArchive => !IsBusy && SelectedArchive != null;
+
+    [RelayCommand(CanExecute = nameof(CanLoadFolder))]
+    private Task LoadFolderAsync()
+    {
+        var folder = SelectedFolder!;
+        if (!folder.IsAll)
+            return MountAsync(folder.Path);
+
+        // Every folder under assets together, each as a directory of its own name
+        var all = Folders.Where(f => !f.IsAll).Select(f => (f.Name, f.Path)).ToList();
+        return MountAsync(folder.Path, () => _vfs.MountAll(folder.Path, all));
+    }
+
+    [RelayCommand(CanExecute = nameof(CanLoadArchive))]
+    private Task LoadArchiveAsync() => MountAsync(SelectedArchive!.Path);
+
+    /// <summary>The label of the one Export button: what it will export right now.</summary>
+    public string ExportText =>
+        _selectedFiles.Count > 0 ? $"Export Selected ({_selectedFiles.Count:N0})"
+        : SelectedDirectory != null ? "Export Folder"
+        : "Export";
+
+    private bool CanExport => !IsBusy && (_selectedFiles.Count > 0 || SelectedDirectory != null);
+
+    /// <summary>
+    /// Exports the selection: the files selected in the list, or, when none are, the selected folder with everything
+    /// under it (the top folder exports everything that is loaded).
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private Task ExportAsync() => _selectedFiles.Count > 0 ? ExportFilesAsync() : ExportDirectoryAsync();
+
+    private void RefreshExport()
+    {
+        OnPropertyChanged(nameof(ExportText));
+        ExportCommand.NotifyCanExecuteChanged();
     }
 
     public ObservableCollection<DirectoryNodeViewModel> Roots { get; } = new();
@@ -95,12 +217,21 @@ public sealed partial class PiggViewerViewModel : ViewModelBase
 
     [ObservableProperty] private DirectoryNodeViewModel? _selectedDirectory;
     [ObservableProperty] private PreviewViewModel? _preview;
-    [ObservableProperty] private string _mountText = "";
-    [ObservableProperty] private string _statusText = "";
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StatusBarText))]
+    private string _mountText = "";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StatusBarText))]
+    private string _statusText = "";
+
+    /// <summary>What is open and what is selected; shown at the right of the main status bar.</summary>
+    public string StatusBarText => string.Join("   |   ", new[] { ResultsText, MountText, StatusText }.Where(t => t.Length > 0));
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(OpenArchiveCommand), nameof(OpenFolderCommand), nameof(OpenAssetsCommand),
-        nameof(OpenModsCommand), nameof(NewFromFolderCommand), nameof(PackTextureCommand))]
+        nameof(OpenModsCommand), nameof(NewFromFolderCommand), nameof(PackTextureCommand),
+        nameof(LoadFolderCommand), nameof(LoadArchiveCommand), nameof(ExportCommand))]
     private bool _isBusy;
 
     private IReadOnlyList<FileRowViewModel> _selectedFiles = Array.Empty<FileRowViewModel>();
@@ -109,6 +240,7 @@ public sealed partial class PiggViewerViewModel : ViewModelBase
     public void SetSelectedFiles(IReadOnlyList<FileRowViewModel> files)
     {
         _selectedFiles = files;
+        RefreshExport();
         UpdateStatus();
         if (files.Count == 1)
             _ = ShowPreviewAsync(files[0]);
@@ -128,6 +260,7 @@ public sealed partial class PiggViewerViewModel : ViewModelBase
         if (value != null)
             foreach (var file in value.Node.Files)
                 Files.Add(new FileRowViewModel(file));
+        RefreshExport();
         UpdateStatus();
     }
 
@@ -198,14 +331,14 @@ public sealed partial class PiggViewerViewModel : ViewModelBase
         await MountAsync(path);
     }
 
-    private async Task MountAsync(string path)
+    private async Task MountAsync(string path, Action? mount = null)
     {
         IsBusy = true;
         StatusText = "Opening...";
         string? error = null;
         try
         {
-            await Task.Run(() => _vfs.Mount(path));
+            await Task.Run(mount ?? (() => _vfs.Mount(path)));
         }
         catch (Exception ex) when (ex is PiggException or IOException or UnauthorizedAccessException)
         {
@@ -227,6 +360,7 @@ public sealed partial class PiggViewerViewModel : ViewModelBase
     {
         Roots.Clear();
         SelectedDirectory = null;
+        RefreshExport();
         if (_vfs.Root is not { } root)
         {
             MountText = "";
@@ -235,23 +369,154 @@ public sealed partial class PiggViewerViewModel : ViewModelBase
 
         var rootVm = new DirectoryNodeViewModel(root, root.Name) { IsExpanded = true };
         Roots.Add(rootVm);
+        _directoryViewModels.Clear();
+        IndexDirectories(rootVm);
         MountText = _vfs.MountType == MountType.Folder
             ? $"[ {root.Name} ] - {_vfs.ArchiveCount} archive(s)"
             : root.Name;
         SelectedDirectory = rootVm;
     }
 
+    private void IndexDirectories(DirectoryNodeViewModel vm)
+    {
+        _directoryViewModels[vm.Node] = vm;
+        foreach (var child in vm.Children)
+            IndexDirectories(child);
+    }
+
     [RelayCommand]
     private void Close()
     {
+        _directoryViewModels.Clear();
         _previewVersion++;
         Preview = null;
         Files.Clear();
         Roots.Clear();
         SelectedDirectory = null;
         _vfs.Unmount();
+        RefreshExport();
         MountText = "";
         StatusText = "Open an archive or a folder of archives.";
+        RunSearch();
+    }
+
+    // ------------------------------------------------------------ search
+
+    private readonly Dictionary<DirectoryNode, DirectoryNodeViewModel> _directoryViewModels = new();
+    private List<(DirectoryNode Directory, FileNode? File)> _results = new();
+    private int _currentResult = -1;
+
+    public const string FilterAll = "All";
+    public const string FilterFolder = "Folder";
+    public const string FilterTexture = "Texture";
+    public const string FilterSound = "Sound (ogg)";
+    public const string FilterPopmenu = "Popmenu";
+    public const string FilterBinary = "Binary";
+
+    /// <summary>What the search looks at: everything, only folder names, or only files of one type.</summary>
+    public IReadOnlyList<string> SearchFilters { get; } =
+        new[] { FilterAll, FilterFolder, FilterTexture, FilterSound, FilterPopmenu, FilterBinary };
+
+    [ObservableProperty] private string _selectedSearchFilter = FilterAll;
+
+    partial void OnSelectedSearchFilterChanged(string value)
+    {
+        _currentResult = -1;
+        RunSearch();
+    }
+
+    /// <summary>The file extension a type filter stands for; null for All and Folder.</summary>
+    private static string? ExtensionFor(string filter) => filter switch
+    {
+        FilterTexture => ".texture",
+        FilterSound => ".ogg",
+        FilterPopmenu => ".mnu",
+        FilterBinary => ".bin",
+        _ => null,
+    };
+
+    /// <summary>Text to look for in the folder and texture (file) names of what is loaded.</summary>
+    [ObservableProperty] private string _searchText = "";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StatusBarText))]
+    private string _resultsText = "";
+
+    /// <summary>Raised to scroll the folder tree to a result's folder / select a result's file in the list.</summary>
+    public event Action<DirectoryNodeViewModel>? DirectoryRequested;
+    public event Action<FileRowViewModel>? FileRequested;
+
+    partial void OnSearchTextChanged(string value)
+    {
+        _currentResult = -1;
+        RunSearch();
+    }
+
+    private bool HasResults => _results.Count > 0;
+
+    /// <summary>All folders and files whose name contains the text, in tree order (a folder before its files).</summary>
+    private void RunSearch()
+    {
+        _results = new List<(DirectoryNode, FileNode?)>();
+        var text = SearchText.Trim();
+        if (text.Length > 0 && _vfs.Root is { } root)
+            Collect(root, text, isRoot: true);
+        if (_currentResult >= _results.Count)
+            _currentResult = -1;
+        UpdateResultsText(text);
+        NextResultCommand.NotifyCanExecuteChanged();
+        PreviousResultCommand.NotifyCanExecuteChanged();
+    }
+
+    private void Collect(DirectoryNode directory, string text, bool isRoot)
+    {
+        var filter = SelectedSearchFilter;
+        var extension = ExtensionFor(filter);
+
+        // Folder names count for All and Folder; files for All and for their own type
+        if (!isRoot && (filter is FilterAll or FilterFolder) && directory.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
+            _results.Add((directory, null));
+        if (filter != FilterFolder)
+            foreach (var file in directory.Files)
+                if (file.Name.Contains(text, StringComparison.OrdinalIgnoreCase) &&
+                    (extension is null || Path.GetExtension(file.Name).Equals(extension, StringComparison.OrdinalIgnoreCase)))
+                    _results.Add((directory, file));
+        foreach (var child in directory.Directories)
+            Collect(child, text, isRoot: false);
+    }
+
+    private void UpdateResultsText(string text)
+    {
+        ResultsText = text.Length == 0 ? ""
+                    : _results.Count == 0 ? "No matches"
+                    : _currentResult >= 0 ? $"Result {_currentResult + 1:N0} of {_results.Count:N0}"
+                    : _results.Count == 1 ? "1 match" : $"{_results.Count:N0} matches";
+    }
+
+    [RelayCommand(CanExecute = nameof(HasResults))]
+    private void NextResult() => StepResult(+1);
+
+    [RelayCommand(CanExecute = nameof(HasResults))]
+    private void PreviousResult() => StepResult(-1);
+
+    private void StepResult(int direction)
+    {
+        if (_results.Count == 0)
+            return;
+        _currentResult = _currentResult < 0
+            ? (direction > 0 ? 0 : _results.Count - 1)
+            : (_currentResult + direction + _results.Count) % _results.Count;
+        UpdateResultsText(SearchText.Trim());
+
+        var (directory, file) = _results[_currentResult];
+        if (!_directoryViewModels.TryGetValue(directory, out var vm))
+            return;
+        for (var parent = vm.Parent; parent != null; parent = parent.Parent)
+            parent.IsExpanded = true;                   // show the folder in the tree
+        SelectedDirectory = vm;                         // fills the file list
+        DirectoryRequested?.Invoke(vm);
+        if (file != null && Files.FirstOrDefault(f => f.Node == file) is { } row)
+            FileRequested?.Invoke(row);
     }
 
     // ------------------------------------------------------------ preview

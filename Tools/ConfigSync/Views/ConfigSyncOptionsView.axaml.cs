@@ -24,7 +24,7 @@ public partial class ConfigSyncOptionsView : UserControl
 
         var folders = await top.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
-            Title = "Select backup folder",
+            Title = "Select the sync folder",
             AllowMultiple = false,
             SuggestedStartLocation = start,
         });

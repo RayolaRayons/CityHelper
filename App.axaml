@@ -2,7 +2,73 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:CityHelper"
              x:Class="CityHelper.App"
-             RequestedThemeVariant="Dark">
+             >
+
+    <!-- Colors that differ between the dark and the light theme; views use {DynamicResource ChName} -->
+    <Application.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.ThemeDictionaries>
+      <ResourceDictionary x:Key="Dark">
+        <SolidColorBrush x:Key="ChBorder" Color="#3F3F46"/>
+        <SolidColorBrush x:Key="ChBorder2" Color="#555555"/>
+        <SolidColorBrush x:Key="ChPanel" Color="#2D2D30"/>
+        <SolidColorBrush x:Key="ChCell" Color="#2B2B2F"/>
+        <SolidColorBrush x:Key="ChHeader" Color="#333333"/>
+        <SolidColorBrush x:Key="ChLogBg" Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="ChTree" Color="#252526"/>
+        <SolidColorBrush x:Key="ChWarn" Color="#E5C07B"/>
+        <SolidColorBrush x:Key="ChError" Color="#F48771"/>
+        <SolidColorBrush x:Key="ChAccent" Color="#5FA8FF"/>
+        <SolidColorBrush x:Key="ChSelectedRow" Color="#26FFFFFF"/>
+        <SolidColorBrush x:Key="ChChip" Color="#3A3A3F"/>
+        <SolidColorBrush x:Key="ChChipBorder" Color="#5A5A60"/>
+        <SolidColorBrush x:Key="ChChipHover" Color="#4A4A52"/>
+        <SolidColorBrush x:Key="ChDropTarget" Color="#264F78"/>
+        <SolidColorBrush x:Key="ChDragging" Color="#0E639C"/>
+        <SolidColorBrush x:Key="ChSlotBorder" Color="#4A4A4F"/>
+        <SolidColorBrush x:Key="ChNewer" Color="#1F4D2B"/>
+        <SolidColorBrush x:Key="ChStarOff" Color="#555555"/>
+        <SolidColorBrush x:Key="ChHover" Color="#2A3A4A"/>
+        <SolidColorBrush x:Key="ChToolHover" Color="#36485C"/>
+        <SolidColorBrush x:Key="ChDelFg" Color="#FF8A80"/>
+        <SolidColorBrush x:Key="ChDelBg" Color="#3A1E1E"/>
+        <SolidColorBrush x:Key="ChDelBorder" Color="#C0392B"/>
+        <SolidColorBrush x:Key="ChDelHover" Color="#4A2626"/>
+        <SolidColorBrush x:Key="ChMuted" Color="#AAAAAA"/>
+        <SolidColorBrush x:Key="ChMuted2" Color="#888888"/>
+      </ResourceDictionary>
+      <ResourceDictionary x:Key="Light">
+        <SolidColorBrush x:Key="ChBorder" Color="#CFCFD6"/>
+        <SolidColorBrush x:Key="ChBorder2" Color="#B8B8C0"/>
+        <SolidColorBrush x:Key="ChPanel" Color="#ECECF0"/>
+        <SolidColorBrush x:Key="ChCell" Color="#F4F4F7"/>
+        <SolidColorBrush x:Key="ChHeader" Color="#E2E2E7"/>
+        <SolidColorBrush x:Key="ChLogBg" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="ChTree" Color="#FAFAFA"/>
+        <SolidColorBrush x:Key="ChWarn" Color="#8A5A00"/>
+        <SolidColorBrush x:Key="ChError" Color="#C0392B"/>
+        <SolidColorBrush x:Key="ChAccent" Color="#0B5CAD"/>
+        <SolidColorBrush x:Key="ChSelectedRow" Color="#22000000"/>
+        <SolidColorBrush x:Key="ChChip" Color="#E3E3E8"/>
+        <SolidColorBrush x:Key="ChChipBorder" Color="#B5B5BD"/>
+        <SolidColorBrush x:Key="ChChipHover" Color="#D5D5DC"/>
+        <SolidColorBrush x:Key="ChDropTarget" Color="#BBD9F5"/>
+        <SolidColorBrush x:Key="ChDragging" Color="#8CC4EE"/>
+        <SolidColorBrush x:Key="ChSlotBorder" Color="#C0C0C8"/>
+        <SolidColorBrush x:Key="ChNewer" Color="#CFEFD6"/>
+        <SolidColorBrush x:Key="ChStarOff" Color="#B8B8B8"/>
+        <SolidColorBrush x:Key="ChHover" Color="#E8F4FD"/>
+        <SolidColorBrush x:Key="ChToolHover" Color="#D0E8FF"/>
+        <SolidColorBrush x:Key="ChDelFg" Color="#990000"/>
+        <SolidColorBrush x:Key="ChDelBg" Color="#FFF0F0"/>
+        <SolidColorBrush x:Key="ChDelBorder" Color="#CC0000"/>
+        <SolidColorBrush x:Key="ChDelHover" Color="#FFDDDD"/>
+        <SolidColorBrush x:Key="ChMuted" Color="#555555"/>
+        <SolidColorBrush x:Key="ChMuted2" Color="#999999"/>
+      </ResourceDictionary>
+        </ResourceDictionary.ThemeDictionaries>
+      </ResourceDictionary>
+    </Application.Resources>
 
     <Application.DataTemplates>
         <local:ViewLocator/>

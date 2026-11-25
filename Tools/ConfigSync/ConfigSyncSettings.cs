@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CityHelper.Services;
 
 namespace CityHelper.Tools.ConfigSync;
 
-/// <summary>Settings of one environment (an installation) as stored in configsync.ini.</summary>
+/// <summary>Settings of one environment (an installation) as stored in CityHelper.ini.</summary>
 public sealed class EnvironmentSettings
 {
     public EnvironmentSettings(string name) => Name = name;
@@ -42,12 +43,16 @@ public sealed class EnvironmentSettings
     }
 }
 
-/// <summary>All Config Sync settings, persisted to configsync.ini in the application directory.</summary>
+/// <summary>All Config Sync settings, persisted to the [ConfigSync.*] sections of CityHelper.ini.</summary>
 public sealed class ConfigSyncSettings
 {
-    public static string DefaultPath => Path.Combine(AppContext.BaseDirectory, "configsync.ini");
-
     public string DefaultEnvironment { get; set; } = "";
+
+    /// <summary>
+    /// When merging logs, a daily log that is already fully inside a weekly / monthly log (locally) is archived
+    /// instead of being kept, and one that exists only in the sync folder is not copied back.
+    /// </summary>
+    public bool ValidateOrphanedLogs { get; set; }
     public List<EnvironmentSettings> Environments { get; } = new();
 
     public EnvironmentSettings? Find(string name) =>
@@ -74,9 +79,9 @@ public sealed class ConfigSyncSettings
     public static ConfigSyncSettings Load(IReadOnlyList<string> environmentNames, string? defaultSuggestion, string? path = null)
     {
         var settings = new ConfigSyncSettings();
-        path ??= DefaultPath;
-        if (File.Exists(path))
-            settings.Parse(File.ReadAllLines(path));
+        var lines = IniStore.ReadLines("ConfigSync", "configsync.ini", path);
+        if (lines != null)
+            settings.Parse(lines);
 
         settings.Environments.RemoveAll(e => !environmentNames.Contains(e.Name, StringComparer.OrdinalIgnoreCase));
         if (settings.Find(settings.DefaultEnvironment) is null)
@@ -96,7 +101,8 @@ public sealed class ConfigSyncSettings
     {
         var sb = new StringBuilder();
         sb.Append("[General]\n");
-        sb.Append("default_environment = ").Append(DefaultEnvironment).Append("\n\n");
+        sb.Append("default_environment = ").Append(DefaultEnvironment).Append('\n');
+        sb.Append("validate_orphaned_logs = ").Append(Bool(ValidateOrphanedLogs)).Append("\n\n");
 
         int i = 1;
         foreach (var env in Environments)
@@ -112,7 +118,7 @@ public sealed class ConfigSyncSettings
                 sb.Append(item.Key).Append(" = ").Append(Bool(env.EnabledItems.Contains(item.Key))).Append('\n');
             sb.Append('\n');
         }
-        File.WriteAllText(path ?? DefaultPath, sb.ToString());
+        IniStore.WriteText("ConfigSync", sb.ToString(), path);
     }
 
     private static string Bool(bool b) => b ? "true" : "false";
@@ -149,6 +155,8 @@ public sealed class ConfigSyncSettings
 
             if (inGeneral && key == "default_environment")
                 DefaultEnvironment = value;
+            else if (inGeneral && key == "validate_orphaned_logs")
+                ValidateOrphanedLogs = on;
             else if (current != null)
             {
                 switch (key)

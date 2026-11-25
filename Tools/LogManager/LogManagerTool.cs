@@ -20,9 +20,17 @@ public sealed class LogManagerTool : ITool
 
     public ViewModelBase CreateViewModel(AppState state) => _vm.Value;
 
-    // Merge and Cleanup Logfile live in the view only; the ribbon carries the standard Refresh
+    // The log actions live in the view only; the ribbon carries the standard Refresh
     public ICommand? RefreshCommand => _vm.Value.RefreshCommand;
 
-    // Settings are read from the file each time they are used, so there is nothing to reload
-    public OptionsSectionViewModel? CreateOptionsSection() => new LogOptionsViewModel(LogManagerSettings.Load());
+    // Settings are read from the file each time they are used; only the label of the period merge button needs a nudge
+    public OptionsSectionViewModel? CreateOptionsSection() =>
+        new LogOptionsViewModel(LogManagerSettings.Load())
+        {
+            Saved = () =>
+            {
+                if (_vm.IsValueCreated)
+                    _vm.Value.RefreshOptions();
+            },
+        };
 }

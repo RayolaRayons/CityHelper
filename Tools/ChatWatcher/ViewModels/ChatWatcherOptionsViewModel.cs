@@ -124,7 +124,7 @@ public sealed partial class ChatWatcherOptionsViewModel : OptionsSectionViewMode
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            return "Could not write chatwatcher.ini:\n" + ex.Message;
+            return "Could not write CityHelper.ini:\n" + ex.Message;
         }
         return null;
     }

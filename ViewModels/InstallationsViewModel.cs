@@ -102,7 +102,7 @@ public sealed partial class InstallationsViewModel : OptionsSectionViewModel
         }
         catch (Exception ex)
         {
-            return "Could not write installations.ini:\n" + ex.Message;
+            return "Could not write CityHelper.ini:\n" + ex.Message;
         }
         _state.ApplyInstallations(list);
         return null;

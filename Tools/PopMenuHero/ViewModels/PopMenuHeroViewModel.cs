@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CityHelper.Ribbon;
 using CityHelper.ViewModels;
 using CityHelper.Tools.PopMenuHero.Services;
 using CityHelper.Tools.PopMenuHero.Core;
@@ -58,6 +59,28 @@ public partial class PopMenuHeroViewModel : ViewModelBase, IEditHost
     [NotifyPropertyChangedFor(nameof(WindowTitle))]
     private bool _isModified;
 
+
+    private IReadOnlyList<RibbonCommand>? _toolbarCommands;
+
+    /// <summary>Icon buttons for the toolbar in the view's title bar ("-" entries are dividers).</summary>
+    public IReadOnlyList<RibbonCommand> ToolbarCommands => _toolbarCommands ??= new[]
+    {
+        new RibbonCommand("New", NewCommand, "New (Ctrl+N)"),
+        new RibbonCommand("Open", OpenCommand, "Open (Ctrl+O)"),
+        new RibbonCommand("Save", SaveCommand, "Save (Ctrl+S)"),
+        new RibbonCommand("Save As", SaveAsCommand, "Save As (Ctrl+Shift+S)"),
+        new RibbonCommand("Import", ImportMenuCommand, "Import (Ctrl+I)"),
+        RibbonCommand.Separator,
+        new RibbonCommand("Undo", UndoCommand, "Undo (Ctrl+Z)"),
+        new RibbonCommand("Copy", CopyCommand, "Copy (Ctrl+C)"),
+        new RibbonCommand("Paste", PasteCommand, "Paste (Ctrl+V)"),
+        new RibbonCommand("Delete", DeleteSelectedCommand, "Delete selected (Del)"),
+        RibbonCommand.Separator,
+        new RibbonCommand("Expand All", ExpandAllCommand, "Expand all"),
+        new RibbonCommand("Collapse Root", CollapseToRootCommand, "Collapse to root"),
+        new RibbonCommand("Collapse All", CollapseAllCommand, "Collapse all"),
+        new RibbonCommand("MNU Preview", OpenPreviewCommand, "MNU preview"),
+    };
 
     public string WindowTitle =>
         $"PopMenu Hero — {(CurrentFile is null ? "Untitled" : Path.GetFileName(CurrentFile))}{(IsModified ? " *" : "")}";

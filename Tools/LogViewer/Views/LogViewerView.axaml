@@ -16,7 +16,7 @@
       <Setter Property="Background" Value="Transparent" />
     </Style>
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Background" Value="#26FFFFFF" />
+      <Setter Property="Background" Value="{DynamicResource ChSelectedRow}" />
     </Style>
     <Style Selector="Button.mini">
       <Setter Property="Padding" Value="8,2" />
@@ -32,20 +32,40 @@
         <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}"
                   PlaceholderText="No log files" />
       </Grid>
-      <StackPanel Orientation="Horizontal" Spacing="8">
+      <WrapPanel ItemSpacing="8" LineSpacing="6">
         <ToggleButton Content="Dates" IsChecked="{Binding ShowDates}" ToolTip.Tip="Show the date on each line" />
         <ToggleButton Content="Times" IsChecked="{Binding ShowTimes}" ToolTip.Tip="Show the time on each line" />
         <ToggleButton Content="Channels" IsChecked="{Binding ShowChannels}" ToolTip.Tip="Show the [channel] on each line" />
         <ToggleButton Content="Characters" IsChecked="{Binding ShowCharacters}" ToolTip.Tip="Show who said it" />
         <ToggleButton Content="Cleanup" IsChecked="{Binding ShowCleanup}"
-                      ToolTip.Tip="Mark in red the lines Log Manager's Cleanup Logfile would remove (the channels unchecked in Options > Log Manager)" />
-        <Border Width="1" Background="#3F3F46" Margin="6,2" />
+                      ToolTip.Tip="Mark in red the lines Cleanup Logfile would remove (the channels unchecked in Options > Log Manager)" />
+        <Border Width="1" Background="{DynamicResource ChBorder}" Margin="6,2" />
+        <Button Content="Refresh" Command="{Binding RefreshCommand}"
+                ToolTip.Tip="Reload the log file from disk, keeping the channel and character filters, and run the current search again (F5)" />
+        <Border Width="1" Background="{DynamicResource ChBorder}" Margin="6,2" />
         <Button Content="Copy" Click="OnCopyClick"
                 ToolTip.Tip="Copy the selected lines (Ctrl+C), as shown: hidden dates, times, channels and color codes are left out. Ctrl+A selects all." />
-        <Border Width="1" Background="#3F3F46" Margin="6,2" />
-        <TextBlock Text="Highlight:" VerticalAlignment="Center" />
-        <TextBox Text="{Binding HighlightText}" Width="240" PlaceholderText="word or phrase (separate several with commas)" />
-        <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Margin="12,0,0,0" Opacity="0.7" TextTrimming="CharacterEllipsis" />
+        <Border Width="1" Background="{DynamicResource ChBorder}" Margin="6,2" />
+        <Button Content="Fix System" Command="{Binding FixSystemCommand}"
+                ToolTip.Tip="Rewrite channels that are a timestamp, e.g. [05:53], as [System] in this log file (needs the option in Options > Log Manager)." />
+        <Button Content="Insert Channels" Command="{Binding InsertChannelsCommand}"
+                ToolTip.Tip="Add [Combat] or [System] to the lines of this log that have no channel but are known combat or system messages. Emotes are left alone." />
+        <Button Content="Cleanup Logfile" Command="{Binding CleanupLogfileCommand}"
+                ToolTip.Tip="Remove the channels that are not selected in Options > Log Manager from this log file." />
+      </WrapPanel>
+
+      <!-- Second row: highlight / search -->
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <ComboBox Width="120" ItemsSource="{Binding FindModes}" SelectedItem="{Binding FindMode}"
+                  ToolTip.Tip="Highlight marks the text in the lines. Search marks it too and lets you step through the lines that contain it." />
+        <TextBox Text="{Binding HighlightText}" Width="260" PlaceholderText="word or phrase (separate several with commas)">
+          <TextBox.KeyBindings>
+            <KeyBinding Gesture="Enter" Command="{Binding NextResultCommand}" />
+            <KeyBinding Gesture="Shift+Enter" Command="{Binding PreviousResultCommand}" />
+          </TextBox.KeyBindings>
+        </TextBox>
+        <Button Content="◀" Command="{Binding PreviousResultCommand}" ToolTip.Tip="Previous result (Shift+Enter)" />
+        <Button Content="▶" Command="{Binding NextResultCommand}" ToolTip.Tip="Next result (Enter)" />
       </StackPanel>
     </StackPanel>
 
@@ -57,7 +77,7 @@
           <Button Classes="mini" Content="All" Command="{Binding CheckAllChannelsCommand}" />
           <Button Classes="mini" Content="None" Command="{Binding UncheckAllChannelsCommand}" />
         </StackPanel>
-        <Border BorderBrush="#3F3F46" BorderThickness="1">
+        <Border BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
           <ListBox ItemsSource="{Binding ChannelItems}" SelectionMode="Single">
             <ListBox.ItemTemplate>
               <DataTemplate x:DataType="vm:FilterItemViewModel">
@@ -74,7 +94,7 @@
           <Button Classes="mini" Content="All" Command="{Binding CheckAllCharactersCommand}" />
           <Button Classes="mini" Content="None" Command="{Binding UncheckAllCharactersCommand}" />
         </StackPanel>
-        <Border BorderBrush="#3F3F46" BorderThickness="1">
+        <Border BorderBrush="{DynamicResource ChBorder}" BorderThickness="1">
           <ListBox ItemsSource="{Binding CharacterItems}" SelectionMode="Single">
             <ListBox.ItemTemplate>
               <DataTemplate x:DataType="vm:FilterItemViewModel">
@@ -87,14 +107,14 @@
     </Grid>
 
     <!-- The log -->
-    <Border Margin="0,10,0,0" BorderBrush="#3F3F46" BorderThickness="1" Background="#1E1E1E">
+    <Border Margin="0,10,0,0" BorderBrush="{DynamicResource ChBorder}" BorderThickness="1" Background="{DynamicResource ChLogBg}">
       <ListBox x:Name="LogList" ItemsSource="{Binding VisibleLines}" SelectionMode="Multiple" Background="Transparent"
                FontFamily="Cascadia Mono, Consolas, Courier New, monospace" FontSize="12.5"
                ScrollViewer.HorizontalScrollBarVisibility="{Binding HorizontalScroll}">
         <ListBox.ItemTemplate>
           <DataTemplate x:DataType="m:LogLine">
             <Grid ColumnDefinitions="60,*">
-              <TextBlock Text="{Binding Number}" Foreground="#5FA8FF" HorizontalAlignment="Right" Margin="0,0,10,0" />
+              <TextBlock Text="{Binding Number}" Foreground="{DynamicResource ChAccent}" HorizontalAlignment="Right" Margin="0,0,10,0" />
               <v:LogLineText Grid.Column="1" Line="{Binding}"
                              Options="{Binding $parent[ListBox].((vm:LogViewerViewModel)DataContext).Display}" />
             </Grid>

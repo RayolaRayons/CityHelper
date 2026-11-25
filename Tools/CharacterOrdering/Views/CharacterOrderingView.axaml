@@ -10,22 +10,22 @@
       <Setter Property="CornerRadius" Value="4" />
     </Style>
     <Style Selector="Border.slot.target">
-      <Setter Property="Background" Value="#264F78" />
+      <Setter Property="Background" Value="{DynamicResource ChDropTarget}" />
     </Style>
 
     <Style Selector="Border.charbtn">
-      <Setter Property="Background" Value="#3A3A3F" />
-      <Setter Property="BorderBrush" Value="#5A5A60" />
+      <Setter Property="Background" Value="{DynamicResource ChChip}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ChChipBorder}" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="CornerRadius" Value="4" />
       <Setter Property="Padding" Value="10,6" />
       <Setter Property="Cursor" Value="Hand" />
     </Style>
     <Style Selector="Border.charbtn:pointerover">
-      <Setter Property="Background" Value="#4A4A52" />
+      <Setter Property="Background" Value="{DynamicResource ChChipHover}" />
     </Style>
     <Style Selector="Border.charbtn.dragging">
-      <Setter Property="Background" Value="#0E639C" />
+      <Setter Property="Background" Value="{DynamicResource ChDragging}" />
       <Setter Property="Opacity" Value="0.9" />
       <Setter Property="IsHitTestVisible" Value="False" />
     </Style>
@@ -35,6 +35,8 @@
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
       <TextBlock Text="Server:" VerticalAlignment="Center" />
       <ComboBox MinWidth="240" ItemsSource="{Binding Servers}" SelectedItem="{Binding SelectedServer}" />
+      <Button Content="Reload" Command="{Binding ReloadCommand}"
+                ToolTip.Tip="Discard unsaved changes and read the file again" />
       <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Opacity="0.7" />
     </StackPanel>
 
@@ -53,7 +55,7 @@
                           IsVisible="{Binding HasCharacter}">
                     <TextBlock Text="{Binding CharacterName}" />
                   </Border>
-                  <Border Grid.Column="1" Height="34" CornerRadius="4" BorderBrush="#4A4A4F" BorderThickness="1"
+                  <Border Grid.Column="1" Height="34" CornerRadius="4" BorderBrush="{DynamicResource ChSlotBorder}" BorderThickness="1"
                           IsVisible="{Binding IsEmpty}" />
                 </Grid>
               </Border>

@@ -18,7 +18,7 @@ public static class LogLineFormatter
         if (o.ShowChannels && line.Channel.Length > 0)
             sb.Append('[').Append(line.Channel).Append("] ");
         if (o.ShowCharacters && line.ShowCharacterPrefix && line.Character.Length > 0)
-            sb.Append(line.Character).Append(": ");
+            sb.Append(line.CharacterDisplay).Append(": ");
 
         sb.Append(MessageText(line, o.ColorCodes));
         return sb.ToString();

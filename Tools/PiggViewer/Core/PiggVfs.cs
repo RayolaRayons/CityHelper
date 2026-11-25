@@ -189,20 +189,7 @@ public sealed class PiggVfs : IDisposable
             }
             else
             {
-                foreach (var file in Directory.EnumerateFiles(absolute))
-                {
-                    PiggArchive? archive = null;
-                    try
-                    {
-                        archive = new PiggArchive(file);
-                        MountArchive(archive, root);
-                        archives.Add(archive);
-                    }
-                    catch (Exception ex) when (ex is PiggException or IOException or UnauthorizedAccessException)
-                    {
-                        archive?.Dispose();               // not an archive: skipped, like the original
-                    }
-                }
+                MountFolderInto(absolute, root, archives);
             }
         }
         catch
@@ -215,6 +202,56 @@ public sealed class PiggVfs : IDisposable
         _archives = archives;
         Root = root;
         MountType = folder ? MountType.Folder : MountType.Archive;
+    }
+
+    /// <summary>
+    /// Mounts every folder of <paramref name="folders"/> (for example live and mods under assets) at once. Each folder's
+    /// archives are merged into a directory of that folder's name, so archives of different folders can hold the same
+    /// file names without clashing.
+    /// </summary>
+    public void MountAll(string rootPath, IEnumerable<(string Name, string Path)> folders)
+    {
+        var root = new DirectoryNode(Path.GetFullPath(rootPath), null);
+        var archives = new List<PiggArchive>();
+        try
+        {
+            foreach (var (name, path) in folders)
+            {
+                var node = new DirectoryNode(name, root);
+                if (!root.Nodes.TryAdd(name, node))
+                    continue;
+                MountFolderInto(Path.GetFullPath(path), node, archives);
+            }
+        }
+        catch
+        {
+            foreach (var a in archives) a.Dispose();
+            throw;
+        }
+
+        Unmount();
+        _archives = archives;
+        Root = root;
+        MountType = MountType.Folder;
+    }
+
+    /// <summary>Mounts each readable archive directly inside the folder into <paramref name="root"/>; other files are skipped.</summary>
+    private static void MountFolderInto(string folder, DirectoryNode root, List<PiggArchive> archives)
+    {
+        foreach (var file in Directory.EnumerateFiles(folder))
+        {
+            PiggArchive? archive = null;
+            try
+            {
+                archive = new PiggArchive(file);
+                MountArchive(archive, root);
+                archives.Add(archive);
+            }
+            catch (Exception ex) when (ex is PiggException or IOException or UnauthorizedAccessException)
+            {
+                archive?.Dispose();               // not an archive: skipped, like the original
+            }
+        }
     }
 
     public void Unmount()
